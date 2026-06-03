@@ -1,0 +1,78 @@
+---
+const year = new Date().getFullYear();
+const social = [
+  { href: 'https://www.linkedin.com/in/abhiyadav/', label: 'LinkedIn' },
+  { href: 'https://twitter.com/', label: 'Twitter' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <div class="brand-mark">IM</div>
+      <p class="footer-tag">
+        Essays and talks on the future of digital identity, by Abhi Yadav.
+      </p>
+    </div>
+
+    <nav aria-label="Footer" class="footer-links">
+      {social.map((s) => (
+        <a href={s.href} rel={s.href.startsWith('http') ? 'me noopener' : undefined}>
+          {s.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+
+  <div class="container footer-fine">
+    <p>© {year} Abhi Yadav · Identity Matters</p>
+    <p class="muted">
+      Views are my own and do not represent those of my employers. Content is
+      vendor-neutral except where noted.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: clamp(3rem, 8vw, 6rem);
+    background: var(--cream-deep);
+    border-top: 1px solid var(--line);
+    padding-block: 2.75rem 1.75rem;
+  }
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    max-width: 30rem;
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 9px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-serif);
+    font-weight: 600;
+  }
+  .footer-tag { margin: 0; color: var(--ink-soft); font-size: 0.96rem; }
+  .footer-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .footer-links a { color: var(--ink); font-weight: 550; font-size: 0.95rem; }
+  .footer-fine {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+  .footer-fine p { margin: 0 0 0.35rem; font-size: 0.85rem; }
+</style>

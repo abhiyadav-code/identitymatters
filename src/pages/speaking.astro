@@ -1,0 +1,150 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const all = await getCollection('speaking');
+const upcoming = all
+  .filter((t) => t.data.upcoming)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+const past = all
+  .filter((t) => !t.data.upcoming)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Group past talks by year for a clean timeline.
+const byYear = new Map<number, typeof past>();
+for (const t of past) {
+  const y = t.data.date.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(t);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
+
+const publications = (await getCollection('publications')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<BaseLayout
+  title="Speaking & Publications"
+  description="Conference talks, panels, and publications by Abhi Yadav on identity & access management — Gartner IAM, RSA, Oracle OpenWorld, European Identity Conference, and more."
+>
+  <section class="section-tight">
+    <div class="container page-head">
+      <p class="eyebrow">Speaking &amp; Publications</p>
+      <h1>Talks, panels &amp; writing elsewhere</h1>
+      <p class="lede">
+        A selection of conferences, user groups, and publications where I’ve
+        shared ideas on identity and access management over the years.
+      </p>
+    </div>
+  </section>
+
+  {upcoming.length > 0 && (
+    <section class="container section-tight">
+      <h2 class="group-title">Upcoming</h2>
+      <ul class="talk-list">
+        {upcoming.map((t) => (
+          <li class="talk-row upcoming">
+            <span class="talk-date">{t.data.dateLabel ?? t.data.date.getFullYear()}</span>
+            <span class="talk-main">
+              <strong>{t.data.event}</strong>
+              {t.data.title && <span class="talk-topic">“{t.data.title}”</span>}
+              {t.data.location && <span class="talk-loc muted">{t.data.location}</span>}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section class="container section-tight">
+    {upcoming.length > 0 && <h2 class="group-title">Past engagements</h2>}
+    {years.map((year) => (
+      <div class="year-block">
+        <h3 class="year-label">{year}</h3>
+        <ul class="talk-list">
+          {byYear.get(year)!.map((t) => (
+            <li class="talk-row">
+              <span class="talk-date">{t.data.dateLabel ?? year}</span>
+              <span class="talk-main">
+                <strong>{t.data.event}</strong>
+                {t.data.title && <span class="talk-topic">“{t.data.title}”</span>}
+                {t.data.location && <span class="talk-loc muted">{t.data.location}</span>}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+
+  <section class="container section publications-band">
+    <h2 class="group-title">Publications</h2>
+    <p class="muted pub-intro">
+      Articles, papers, and features published elsewhere.
+    </p>
+    <ul class="pub-list">
+      {publications.map((p) => (
+        <li class="pub-row">
+          <div>
+            {p.data.link ? (
+              <a href={p.data.link} class="pub-title" rel="noopener">{p.data.title}</a>
+            ) : (
+              <span class="pub-title">{p.data.title}</span>
+            )}
+            <span class="pub-meta muted">
+              {p.data.outlet}{(p.data.dateLabel || p.data.date) && <> · {p.data.dateLabel ?? p.data.date.getFullYear()}</>}
+            </span>
+            {p.data.description && <p class="pub-desc">{p.data.description}</p>}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head { max-width: var(--maxw-prose); }
+  .group-title { margin-bottom: 1.25rem; }
+  .year-block { margin-bottom: 1.5rem; }
+  .year-label {
+    font-size: 1rem;
+    color: var(--accent-deep);
+    letter-spacing: 0.04em;
+    margin: 1.75rem 0 0.25rem;
+  }
+
+  .talk-list { list-style: none; margin: 0; padding: 0; }
+  .talk-row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1rem;
+    padding: 0.95rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .talk-row:last-child { border-bottom: 1px solid var(--line); }
+  .talk-row.upcoming {
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+    border-radius: var(--radius-sm);
+    padding: 0.95rem 1.1rem;
+    margin-bottom: 0.6rem;
+  }
+  .talk-date { color: var(--accent-deep); font-weight: 600; font-size: 0.95rem; }
+  .talk-main { display: flex; flex-direction: column; gap: 0.2rem; }
+  .talk-topic { color: var(--ink-soft); font-size: 0.97rem; }
+  .talk-loc { font-size: 0.88rem; }
+
+  .publications-band { border-top: 1px solid var(--line); margin-top: 1rem; }
+  .pub-intro { margin-top: -0.5rem; }
+  .pub-list { list-style: none; margin: 1rem 0 0; padding: 0; }
+  .pub-row { padding: 1rem 0; border-top: 1px solid var(--line); }
+  .pub-row:last-child { border-bottom: 1px solid var(--line); }
+  .pub-title { font-weight: 600; font-size: 1.05rem; display: inline-block; margin-right: 0.5rem; }
+  .pub-meta { font-size: 0.9rem; display: block; margin-top: 0.1rem; }
+  .pub-desc { margin: 0.4rem 0 0; color: var(--ink-soft); font-size: 0.96rem; }
+
+  @media (max-width: 560px) {
+    .talk-row { grid-template-columns: 1fr; gap: 0.25rem; }
+  }
+</style>

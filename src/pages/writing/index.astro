@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title="Writing"
+  description="Essays on identity & access management — the perimeter, IDaaS, privileged access, cloud IAM, and the future of digital identity."
+>
+  <section class="section-tight">
+    <div class="container page-head">
+      <p class="eyebrow">Writing</p>
+      <h1>Essays on digital identity</h1>
+      <p class="lede">
+        Vendor-neutral notes on identity as the new control plane — IDaaS,
+        privileged access, cloud IAM, and where the industry is heading.
+      </p>
+    </div>
+  </section>
+
+  <section class="container section-tight">
+    <div class="card-grid">
+      {posts.map((post) => (
+        <PostCard
+          href={`/writing/${post.id}/`}
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          heroImage={post.data.heroImage}
+          heroAlt={post.data.heroAlt}
+          hasAudio={Boolean(post.data.audio)}
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head { max-width: var(--maxw-prose); }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.5rem;
+  }
+</style>

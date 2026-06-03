@@ -1,0 +1,165 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const featured = posts.slice(0, 3);
+
+const talks = (await getCollection('speaking')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const talkHighlights = talks.slice(0, 4);
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <p class="eyebrow">Identity &amp; Access Management</p>
+        <h1>Hi, I’m Abhi Yadav.</h1>
+        <p class="lede">
+          For 15+ years I’ve worked alongside the people building the future of
+          digital identity — from early access-control startups to Sun
+          Microsystems and the cloud. I write and speak about identity as the new
+          control plane for security.
+        </p>
+        <p class="hero-sub muted">
+          I believe in the Feynman technique: the best way to understand
+          something is to teach it. This is where I do that — vendor-neutral,
+          opinions my own.
+        </p>
+        <div class="hero-cta">
+          <a href="/writing" class="btn btn-primary">Read the writing</a>
+          <a href="/about" class="btn btn-ghost">About me</a>
+        </div>
+      </div>
+
+      <div class="hero-portrait" aria-hidden="true">
+        <!-- Replace src with a real headshot during content migration. -->
+        <img src="/images/headshot.svg" alt="" width="320" height="320" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured writing -->
+  <section class="section container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Writing</p>
+        <h2>Recent essays</h2>
+      </div>
+      <a href="/writing" class="see-all">All articles →</a>
+    </div>
+
+    <div class="card-grid">
+      {featured.map((post) => (
+        <PostCard
+          href={`/writing/${post.id}/`}
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          heroImage={post.data.heroImage}
+          heroAlt={post.data.heroAlt}
+          hasAudio={Boolean(post.data.audio)}
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- Speaking highlights -->
+  <section class="section-tight speaking-band">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Speaking</p>
+          <h2>On stage &amp; in the room</h2>
+        </div>
+        <a href="/speaking" class="see-all">All engagements →</a>
+      </div>
+
+      <ul class="talk-list">
+        {talkHighlights.map((t) => (
+          <li class="talk-row">
+            <span class="talk-date">{t.data.dateLabel ?? t.data.date.getFullYear()}</span>
+            <span class="talk-main">
+              <strong>{t.data.event}</strong>
+              {t.data.title && <span class="talk-topic">{t.data.title}</span>}
+            </span>
+            {t.data.location && <span class="talk-loc muted">{t.data.location}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero { padding-block: clamp(2.5rem, 7vw, 5rem); }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.5fr 0.9fr;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+  .hero h1 { margin-bottom: 1rem; }
+  .hero-sub { font-size: 1rem; margin-top: 0.75rem; max-width: 34rem; }
+  .hero-cta { display: flex; gap: 0.75rem; margin-top: 1.75rem; flex-wrap: wrap; }
+  .hero-portrait { justify-self: center; }
+  .hero-portrait img {
+    width: clamp(180px, 28vw, 300px);
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--paper);
+    box-shadow: var(--shadow-lift);
+    background: var(--accent-soft);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .section-head h2 { margin: 0; }
+  .see-all { font-weight: 600; font-size: 0.95rem; white-space: nowrap; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .speaking-band {
+    background: var(--cream-deep);
+    border-block: 1px solid var(--line);
+  }
+  .talk-list { list-style: none; margin: 0; padding: 0; }
+  .talk-row {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 1rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .talk-row:last-child { border-bottom: 1px solid var(--line); }
+  .talk-date { color: var(--accent-deep); font-weight: 600; font-size: 0.95rem; }
+  .talk-main { display: flex; flex-direction: column; gap: 0.15rem; }
+  .talk-topic { color: var(--ink-soft); font-size: 0.95rem; }
+  .talk-loc { font-size: 0.9rem; }
+
+  @media (max-width: 760px) {
+    .hero-inner { grid-template-columns: 1fr; text-align: left; }
+    .hero-portrait { order: -1; justify-self: start; }
+    .talk-row { grid-template-columns: 1fr; gap: 0.2rem; }
+    .talk-loc { order: 3; }
+  }
+</style>

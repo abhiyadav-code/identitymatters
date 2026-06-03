@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import { url } from '../lib/url';
 
 const posts = (await getCollection('blog'))
   .filter((p) => !p.data.draft)
@@ -34,14 +35,14 @@ const talkHighlights = talks.slice(0, 4);
           opinions my own.
         </p>
         <div class="hero-cta">
-          <a href="/writing" class="btn btn-primary">Read the writing</a>
-          <a href="/about" class="btn btn-ghost">About me</a>
+          <a href={url('/writing')} class="btn btn-primary">Read the writing</a>
+          <a href={url('/about')} class="btn btn-ghost">About me</a>
         </div>
       </div>
 
       <div class="hero-portrait" aria-hidden="true">
         <!-- Replace src with a real headshot during content migration. -->
-        <img src="/images/headshot.svg" alt="" width="320" height="320" />
+        <img src={url('/images/headshot.svg')} alt="" width="320" height="320" />
       </div>
     </div>
   </section>
@@ -53,7 +54,7 @@ const talkHighlights = talks.slice(0, 4);
         <p class="eyebrow">Writing</p>
         <h2>Recent essays</h2>
       </div>
-      <a href="/writing" class="see-all">All articles →</a>
+      <a href={url('/writing')} class="see-all">All articles →</a>
     </div>
 
     <div class="card-grid">
@@ -79,7 +80,7 @@ const talkHighlights = talks.slice(0, 4);
           <p class="eyebrow">Speaking</p>
           <h2>On stage &amp; in the room</h2>
         </div>
-        <a href="/speaking" class="see-all">All engagements →</a>
+        <a href={url('/speaking')} class="see-all">All engagements →</a>
       </div>
 
       <ul class="talk-list">

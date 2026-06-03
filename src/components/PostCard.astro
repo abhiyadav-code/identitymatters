@@ -1,4 +1,6 @@
 ---
+import { url } from '../lib/url';
+
 interface Props {
   href: string;
   title: string;
@@ -16,10 +18,10 @@ const dateStr = pubDate.toLocaleDateString('en-US', {
 });
 ---
 
-<a href={href} class="card post-card">
+<a href={url(href)} class="card post-card">
   {heroImage && (
     <div class="post-thumb">
-      <img src={heroImage} alt={heroAlt ?? ''} width="720" height="420" loading="lazy" decoding="async" />
+      <img src={url(heroImage)} alt={heroAlt ?? ''} width="720" height="420" loading="lazy" decoding="async" />
     </div>
   )}
   <div class="post-body">

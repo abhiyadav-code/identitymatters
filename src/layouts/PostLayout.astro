@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import AudioPlayer from '../components/AudioPlayer.astro';
+import { url } from '../lib/url';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -19,7 +20,7 @@ const dateStr = pubDate.toLocaleDateString('en-US', {
 <BaseLayout title={title} description={description}>
   <article class="section-tight">
     <div class="container post-head">
-      <a href="/writing" class="back-link">← All writing</a>
+      <a href={url('/writing')} class="back-link">← All writing</a>
       <p class="eyebrow">Article</p>
       <h1>{title}</h1>
       <p class="lede">{description}</p>
@@ -32,7 +33,7 @@ const dateStr = pubDate.toLocaleDateString('en-US', {
 
     {heroImage && (
       <div class="container post-hero">
-        <img src={heroImage} alt={heroAlt ?? ''} width="1200" height="675" />
+        <img src={url(heroImage)} alt={heroAlt ?? ''} width="1200" height="675" />
       </div>
     )}
 
@@ -47,7 +48,7 @@ const dateStr = pubDate.toLocaleDateString('en-US', {
       <hr class="rule prose" />
       <p class="prose muted post-foot">
         Thanks for reading. For more essays and talks on digital identity, visit the
-        <a href="/writing">writing index</a> or see where I'm <a href="/speaking">speaking</a>.
+        <a href={url('/writing')}>writing index</a> or see where I'm <a href={url('/speaking')}>speaking</a>.
       </p>
     </div>
   </article>

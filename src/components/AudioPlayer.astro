@@ -1,10 +1,13 @@
 ---
+import { url } from '../lib/url';
+
 interface Props {
   src: string;
   title?: string;
   caption?: string;
 }
 const { src, title = 'Listen to this article', caption } = Astro.props;
+const audioSrc = url(src);
 ---
 
 <figure class="audio">
@@ -18,9 +21,9 @@ const { src, title = 'Listen to this article', caption } = Astro.props;
     </span>
     <span class="audio-title">{title}</span>
   </figcaption>
-  <audio controls preload="none" src={src}>
+  <audio controls preload="none" src={audioSrc}>
     Your browser does not support the audio element.
-    <a href={src}>Download the audio</a>.
+    <a href={audioSrc}>Download the audio</a>.
   </audio>
   {caption && <p class="audio-caption">{caption}</p>}
 </figure>

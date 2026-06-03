@@ -16,6 +16,10 @@ import {
 const phLabel = (t: string) => (t.length > 42 ? t.slice(0, 40) + '…' : t);
 const readLabel = (kind: string) =>
   kind === 'pdf' ? 'View PDF' : kind === 'audio' ? 'Listen' : 'Read';
+
+// Base-resolve local article images (keeps absolute http(s) urls untouched)
+// for both the cards and the JSON the modal reads on the client.
+const articlesForClient = articles.map((a) => ({ ...a, img: a.img ? url(a.img) : '' }));
 ---
 
 <BaseLayout>
@@ -186,8 +190,14 @@ const readLabel = (kind: string) =>
         {articles.map((a, i) => (
           <article class="article-card reveal" style={`transition-delay:${(i % 3) * 60}ms`} data-article={i} role="button" tabindex="0" aria-label={`Open: ${a.title}`}>
             <div class="article-thumb">
-              <div class="ph">{phLabel(a.title)}</div>
-              {a.img && <img src={a.img} alt={a.title} loading="lazy" data-fallback />}
+              {a.img ? (
+                <>
+                  <img src={url(a.img)} alt={a.title} loading="lazy" data-fallback />
+                  <div class="ph" style="display:none">{phLabel(a.title)}</div>
+                </>
+              ) : (
+                <div class="ph">{phLabel(a.title)}</div>
+              )}
             </div>
             <div class="article-body">
               <div class="article-date">{a.date}</div>
@@ -233,7 +243,7 @@ const readLabel = (kind: string) =>
   <!-- Modal mount + data -->
   <div id="modal-root"></div>
   <script type="application/json" id="videos-data" set:html={JSON.stringify(videos)} is:inline></script>
-  <script type="application/json" id="articles-data" set:html={JSON.stringify(articles)} is:inline></script>
+  <script type="application/json" id="articles-data" set:html={JSON.stringify(articlesForClient)} is:inline></script>
 
   <script>
     const $ = (s: string, r: ParentNode = document) => r.querySelector(s);
@@ -266,9 +276,13 @@ const readLabel = (kind: string) =>
     );
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
-    // ---- Article thumbnail fallback ----
+    // ---- Article thumbnail fallback: hide broken img, reveal gradient placeholder ----
     document.querySelectorAll<HTMLImageElement>('img[data-fallback]').forEach((img) => {
-      img.addEventListener('error', () => { img.style.display = 'none'; });
+      img.addEventListener('error', () => {
+        img.style.display = 'none';
+        const ph = img.nextElementSibling as HTMLElement | null;
+        if (ph?.classList.contains('ph')) ph.style.display = 'grid';
+      });
     });
 
     // ---- Modals ----

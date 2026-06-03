@@ -1,0 +1,101 @@
+<p>&nbsp;</p>
+<blockquote><p><a href="https://oneworldidentity.com/">OneWorld Identity</a>&#8216;s Cameron D’Ambrosi sat down with Shawn Keve and me to discuss the unique challenges of Privileged Identity Management as compared to traditional IAM, aired in the August edition of his <em>&#8220;The State of Identity&#8221; podcast.</em> Listen to a recording here:</p></blockquote>
+<blockquote><audio class="wp-audio-shortcode" id="audio-158-1" preload="none" style="width: 100%;" controls="controls"><source type="audio/mpeg" src="/audio/pim-pam-or-perish.mp3" /><a href="/audio/pim-pam-or-perish.mp3">/audio/pim-pam-or-perish.mp3</a></audio></blockquote>
+<div class="page" title="Page 1">
+<div class="layoutArea">
+<div class="column">
+<p style="text-align:justify;">Privileged identities come in various forms: they can be elevated accounts on your cloud services like root accounts on AWS instances, local administrator accounts on workstations &amp; endpoints, or service accounts used by applications. These identities provide pretty much unfettered access to IT systems, and therefore ensuring the security of these accounts should be a top priority.</p>
+<p style="text-align:justify;">The <a href="http://www.verizonenterprise.com/verizon-insights-lab/dbir/2017/">2017 Verizon Data Breach Investigations Report</a> shows that 90% of breaches were attributed to sophisticated state or state-like actors who used phishing as their primary method to gain access and then seeks to escalate privileges. Once they get hold of privileged identity credentials, then it&#8217;s quite easily for them to move laterally and hide their footprints &#8211; and it&#8217;s game over.</p>
+<blockquote><p>&#8220;Most malware require elevated privileges to do harm.&#8221;</p></blockquote>
+<p>Most often attackers masquerade as privileged users. A 2016 survey by Aberdeen showed that 90% of data breaches involve the compromise or misuse of privileged access. In the wrong hands, the damage has proven to be catastrophic.</p>
+<p>&nbsp;</p>
+</div>
+</div>
+<h6><strong>Here are some potential blind spots that organizations need to pay attention to with respect to managing their privileged identities:</strong></h6>
+<p><span style="line-height:1.2em;"><strong>(1) Securing Local Admin</strong></span></p>
+<p style="text-align:justify;"><span style="line-height:1.2em;">While PIM is easy to understand at the O/S level, where these are system accounts like Windows Admin and Unit Root, most organizations do not pay sufficient attention to local admin accounts on endpoints and admin accounts on the database. </span><span style="line-height:1.2em;">With local admin, users can disable security settings and install malware.</span></p>
+<p style="text-align:justify;">A sensible way to approach this is to come to an agreement with business that all users do not need this access all the time, and implement a process for privilege elevation e.g. a way for users to request temporary, permanent, or emergency local admin rights.</p>
+<p><strong>(2) Using PAM to Secure the Cloud</strong></p>
+<p style="text-align:justify;">The auto-scaling nature of cloud creates a rather large blind spot for most organizations when it comes to securing privileged access. With IaaS for example, this involves not just locking down super user access to the VMM/ Hypervisor &#8211; but due to the ephermeral nature of instances, an agile PAM system is required that can provide <em>just-in-time privilege</em> to instance admins, local users accounts on instances, access to storage, and even temporary privileges for application-to-application accounts.</p>
+<p style="text-align:justify;">Another blind spot with the cloud is Shadow IT, and to secure this organizations are turning to proxy-based CASB solution which have some DLP-like capability, in addition to thier PAM systems.</p>
+</div>
+<div class="page" title="Page 1">
+<blockquote><p>Gartner predicts that be 2020, 95% of IaaS security failures will be the customers fault, and half due to mismanagement of identity privileges</p></blockquote>
+<p>&#8230;A cause in point is the recent <a href="https://threatpost.com/four-million-time-warner-cable-records-left-on-misconfigured-aws-s3/127807/">Time Warner Cable breach</a>.</p>
+</div>
+<p>&nbsp;</p>
+<div class="page" title="Page 1">
+<p><strong>(4) Securing DevOps</strong></p>
+<p>There&#8217;s a transformation is happening in how organizations deploy software today, and as identity specialists we need to think of different ways to deliver identity. DevOps culture include Continious Integration &amp; Continuous Deployment (CI/CD) tools which need privileged access to traditional on-premise or IaaS platforms. This brings with it a need for &#8220;elastic&#8221; identity or elastic PAM abilities that require systems to be agile and nimble in ways they provide access.</p>
+<p>Also, with container management and orchestration tools becoming popoular that allow systems to span across multiple IaaS environments, it becomes important for PAM tools to include Segregation of Duty capabilities that can detect potential conflicts. PAM tools need to be able to auto-scale for DevOps and have service discovery across multiple IaaS environments.</p>
+</div>
+<div class="page" title="Page 16">
+<div class="section">
+<div class="layoutArea">
+<div class="column">
+<div class="page" title="Page 1">
+<div class="page" title="Page 16"></div>
+<p>&nbsp;</p>
+<p><strong>(3) Establish Identity Governance processes for Privileged Access</strong></p>
+<p style="text-align:justify;">The Verizon DBIR report indicates that the majority (81%) of privilege misuse can be related to insider threats. Increasingly, auditors are finding companies that do not extend their enterprise identity governace (IGA) controls for privileged access. This takes the form of providing an approval-workflow based method to request privileged access, periodic certification of privileged accounts like admin/root/DBA, and providing auditors with reports on who did what with their privileged access.</p>
+<p style="text-align:justify;">By bringing together traditional enterprise identity governance controls with PAM systems, organizations are better able to address security vulnerabilities and are better prepared for audits.</p>
+</div>
+<p>&nbsp;</p>
+</div>
+<p><strong>(5) Weeding out suspicious behavior with privileged activity monitoring<br />
+</strong></p>
+<p><span style="line-height:inherit;text-align:justify;">Traditionally, organizations have tackled these problems by implementing complex software and hardware, added specialized security resources, and integrated and managed everything in-house. These solutions provide alerts, but organizations are expected to figure out what those alerts mean. Most of these organizations found it incredibly challenging to expand the scope of their controls beyond managing basic local administrative accounts.</span></p>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+<div class="page" title="Page 1">
+<div class="layoutArea">
+<div class="column">
+<p style="text-align:justify;">Moreover, traditional Privileged Access Management (PAM) solutions do not provide proactive controls for detecting and blocking privileged access misuse. Often, organizations lack sufficient skill sets to respond as quickly as required, or find out only after the fact that accounts have been used inappropriately.</p>
+<p>&nbsp;</p>
+</div>
+</div>
+</div>
+<hr />
+<h4></h4>
+<p>&nbsp;</p>
+<h5><strong>Here are some steps that organizations can take to reduce their risk exposure with privilege identities:</strong></h5>
+<ol>
+<li>
+<h6>Identify which resources (individuals and systems) have elevated access to protected resources</h6>
+<ul>
+<li>Vendors like <a href="https://www.cyberark.com/discover-privileged-accounts-exist-cyberark-dna/">CyberArk</a> and <a href="https://www.beyondtrust.com/free-privilege-discovery-reporting-tool/">BeyondTrust</a> have some pretty nice (and free) tools that help with this discovery.</li>
+</ul>
+<h6></h6>
+</li>
+<li>
+<h6>Understand the scope of privileged identity interactions with protected resources</h6>
+<ul>
+<li>Conduct a risk assessment analyzing vulnerabilities and likelihood of misuse at this stage that includes cloud resources. The <a href="http://csrc.nist.gov/publications/papers/2016/best-practices-privileged-user-piv-authentication.pdf">NIST CyberSecurity Whitepaper</a> that details an implementation approach that maps implementation back to 800-53 controls.</li>
+<li>Review DevOps containers &amp; automation scripts for potential risks of collusion with privileged access.</li>
+<li>Eliminate all unnecessary privileged access.</li>
+</ul>
+<h6></h6>
+</li>
+<li>
+<h6><span style="line-height:1.7;">Establish a privileged identity management framework to mitigate ongoing risk</span></h6>
+<ul>
+<li>Define a governance framework that aligns with procedures &amp; management control. The <a href="http://docplayer.net/16666077-Icam-privileged-user-instruction-and-implementation-guidance-version-1-0.html">ICAM guide</a> is a good starting point, albeit a dated document.</li>
+<li>Implement a PAM Credential Vault for passwords, SSH keys etc., and business processes for checking-out passwords with approval.</li>
+<li>Setup &#8220;break-glass&#8221; procedures for emergency use.</li>
+<li>Record and monitor privileged user sessions, and implement command filtering.</li>
+<li>Establish MFA architectures for privileged access. For example, after their 2015 breach OMB required all federal agencies use PIV-based credentials (hard tokens) for authenticating privileged users (although an alternate solution using soft tokens would be more elegant).</li>
+</ul>
+<h6></h6>
+</li>
+<li>
+<h6>Improve this implementation by monitoring these activities against business use &amp; scale for future need:</h6>
+<ul>
+<li>Incorporate PIM/PAM in strategic planning for the enterprise.</li>
+<li>Establish task forces and action plans to resolve alerts.</li>
+<li>Tie in alerts to a behavioral analytics system like Securonix to use unsupervised machine learning algorithms to detect suspicious privileged misuse.</li>
+</ul>
+</li>
+</ol>
+</div><span class="sd-text-color"></span><a class="sd-link-color"></a></div>

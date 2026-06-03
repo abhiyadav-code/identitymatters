@@ -162,3 +162,12 @@ export const articles: Article[] = [
     excerpt: 'A technical white paper published via Oracle examining a modern, wave-based approach to access control. Opens the original PDF.',
   },
 ];
+
+// --- Article routing helpers ----------------------------------------------
+// The local thumbnail filename doubles as the slug (e.g. under-the-hood).
+export const articleSlug = (a: Article): string =>
+  a.img ? a.img.split('/').pop()!.replace(/\.[^.]+$/, '') : '';
+
+// Every article except the external PDF gets a native page on this site.
+export const hasNativePage = (a: Article): boolean =>
+  a.kind !== 'pdf' && !!articleSlug(a);

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import { url } from '../lib/url';
 import {
   person,
@@ -11,15 +12,29 @@ import {
   upcoming,
   talks,
   articles,
+  articleSlug,
+  hasNativePage,
 } from '../data/site';
 
 const phLabel = (t: string) => (t.length > 42 ? t.slice(0, 40) + '…' : t);
 const readLabel = (kind: string) =>
   kind === 'pdf' ? 'View PDF' : kind === 'audio' ? 'Listen' : 'Read';
 
-// Base-resolve local article images (keeps absolute http(s) urls untouched)
-// for both the cards and the JSON the modal reads on the client.
-const articlesForClient = articles.map((a) => ({ ...a, img: a.img ? url(a.img) : '' }));
+// Enrich each article for the client modal:
+// - base-resolve the local thumbnail
+// - "Read the full article" now points to the NATIVE page on this site
+//   (the external PDF is the only one that still opens off-site).
+const articlesForClient = articles.map((a) => {
+  const native = hasNativePage(a);
+  return {
+    ...a,
+    img: a.img ? url(a.img) : '',
+    readHref: native ? url(`/writing/${articleSlug(a)}/`) : a.url,
+    readCta:
+      a.kind === 'pdf' ? 'Open the PDF' : a.kind === 'audio' ? 'Listen to the episode' : 'Read the full article',
+    external: !native,
+  };
+});
 ---
 
 <BaseLayout>
@@ -215,30 +230,7 @@ const articlesForClient = articles.map((a) => ({ ...a, img: a.img ? url(a.img) :
   </section>
 
   <!-- ===== Footer ===== -->
-  <footer class="footer" id="contact">
-    <div class="wrap">
-      <div class="reveal">
-        <span class="eyebrow">Get in touch</span>
-        <h2 class="footer-cta">Let's talk identity, access &amp; trust.</h2>
-      </div>
-      <div class="footer-row">
-        <div class="footer-contact">
-          <div><div class="lbl">Email</div><a href={`mailto:${person.email}`}>{person.email}</a></div>
-          <div><div class="lbl">Location</div>{person.location}</div>
-        </div>
-        <div class="footer-social">
-          <a href={person.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" /></a>
-          <a href={person.social.x} target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>
-          <a href={person.social.github} target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
-          <a href={`mailto:${person.email}`} aria-label="Email"><Icon name="mail" /></a>
-        </div>
-      </div>
-      <p class="footer-fine">
-        Views expressed here are my own and do not represent those of my employer. &nbsp;·&nbsp;
-        © {new Date().getFullYear()} {person.name}. Built as a living archive of my writing &amp; talks.
-      </p>
-    </div>
-  </footer>
+  <SiteFooter />
 
   <!-- Modal mount + data -->
   <div id="modal-root"></div>
@@ -319,7 +311,6 @@ const articlesForClient = articles.map((a) => ({ ...a, img: a.img ? url(a.img) :
     }
     function esc(s = '') { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
     function openArticle(a: any) {
-      const isPdf = a.kind === 'pdf';
       const head = a.img
         ? `<img src="${a.img}" alt="" onerror="this.style.display='none';this.previousElementSibling.style.display='grid'" /><div class="ph" style="display:none">${esc(a.title)}</div>`
         : `<div class="ph">${esc(a.title)}</div>`;
@@ -333,9 +324,8 @@ const articlesForClient = articles.map((a) => ({ ...a, img: a.img ? url(a.img) :
               <h2>${esc(a.title)}</h2>
               <div class="rmeta">${esc(a.date)} &nbsp;·&nbsp; ${esc(a.source)}</div>
               <p>${esc(a.excerpt)}</p>
-              <div class="rnote">This is a preview drawn from the original publication. Open the full piece to read it in its entirety.</div>
               <div class="ractions">
-                <a class="btn btn-primary" href="${a.url}" target="_blank" rel="noopener">${isPdf ? 'Open the PDF' : 'Read the full article'} ${svg('arrow')}</a>
+                <a class="btn btn-primary" href="${a.readHref}"${a.external ? ' target="_blank" rel="noopener"' : ''}>${a.readCta} ${svg('arrow')}</a>
               </div>
             </div>
           </div>

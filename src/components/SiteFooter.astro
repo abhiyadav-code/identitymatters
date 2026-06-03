@@ -1,0 +1,39 @@
+---
+import Icon from './Icon.astro';
+import { url } from '../lib/url';
+import { person } from '../data/site';
+
+interface Props {
+  // When true, the "Let's talk" CTA links back to the homepage contact area
+  // (used on subpages where #contact isn't on the same document).
+  linkHome?: boolean;
+}
+const { linkHome = false } = Astro.props;
+const homeContact = `${url('/')}#contact`;
+---
+
+<footer class="footer" id="contact">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Get in touch</span>
+      <h2 class="footer-cta">Let's talk identity, access &amp; trust.</h2>
+    </div>
+    <div class="footer-row">
+      <div class="footer-contact">
+        <div><div class="lbl">Email</div><a href={`mailto:${person.email}`}>{person.email}</a></div>
+        <div><div class="lbl">Location</div>{person.location}</div>
+      </div>
+      <div class="footer-social">
+        <a href={person.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" /></a>
+        <a href={person.social.x} target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>
+        <a href={person.social.github} target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
+        <a href={`mailto:${person.email}`} aria-label="Email"><Icon name="mail" /></a>
+      </div>
+    </div>
+    <p class="footer-fine">
+      Views expressed here are my own and do not represent those of my employer. &nbsp;·&nbsp;
+      © {new Date().getFullYear()} {person.name}. Built as a living archive of my writing &amp; talks.
+      {linkHome && (<> &nbsp;·&nbsp; <a href={homeContact}>Back home</a></>)}
+    </p>
+  </div>
+</footer>

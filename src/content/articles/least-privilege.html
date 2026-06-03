@@ -1,0 +1,66 @@
+<p class="wp-block-paragraph">This is a repost of <a rel="noreferrer noopener" href="https://cloud.google.com/blog/products/identity-security/achieve-least-privilege-with-less-effort-using-iam-recommender" target="_blank">the blog</a> I published earlier on Google Cloud&#8217;s site.</p>
+
+<p class="wp-block-paragraph">As cloud adoption grows, we’re seeing exponential growth in cloud resources. With this we’re also seeing growth in permissions, granted to humans and workloads, to access and change those resources. This introduces potential risks, including the misuse of privileges, that can compromise your organization’s security.</p>
+
+<p class="wp-block-paragraph">To mitigate these risks, ideally every human or workload should only be granted the permissions they need, at the time they need them. This is the security best practice known as “least privilege access.”&nbsp;</p>
+
+<p class="wp-block-paragraph">Unfortunately, we don’t implement this practice enough: In fact, internal Google research shows that most permissions granted by admins aren’t used in a 90-day observation period. To achieve least privilege you need to identify high-risk permissions that aren’t needed and are therefore safe to remove. In this post, we’ll look at some of the challenges of establishing least privilege at scale, outline some best practices for how you can get started, and see how IAM Recommender can help.</p>
+
+<h3 class="wp-block-heading">Least privilege basics</h3>
+
+<p class="wp-block-paragraph">The first step in establishing least privilege is understanding which permissions a user has today and which have been used recently. Then, you need to understand which permissions this user is likely to need in the future, so you avoid getting into a manually intensive trial-and-error loop of assigning incremental permissions. Once you have that, you need to decide how to construct your identity and access management (IAM) policies so that you can reuse roles across several members and projects. Finally, you should aim to change your policies to remove these excessive permissions or monitor their use closely.</p>
+
+<p class="wp-block-paragraph">This is easier said than done.</p>
+
+<h3 class="wp-block-heading">Establishing least privilege at scale</h3>
+
+<p class="wp-block-paragraph">A key challenge in solving this problem is understanding how to achieve least privilege efficiently at scale. At Google Cloud, our mission is to accelerate every organization’s ability to reimagine their business through data-powered transformation. We aim to deliver a type of transformation that uplifts your security experience in the cloud, where your developers can innovate at speed while data-backed intelligence helps keep your resources safe.</p>
+
+<p class="wp-block-paragraph">Since we first introduced IAM Recommender at Next ‘19, we have been working with many large organizations—including Uber and Veolia Group—that have been able to use IAM recommendations to help make their environments more secure, while reducing the number of permissions that were granted. IAM Recommender is now generally available, as part of our&nbsp;<a href="https://cloud.google.com/blog/products/management-tools/active-assist-comes-to-google-cloud">new Active Assist portfolio,</a>&nbsp;to provide safe, in-context, and actionable changes to your IAM policies that move your project towards least privilege and don’t require lots of manual effort on your part.</p>
+
+<p class="wp-block-paragraph">Veolia Group, a French resource management company, has 171,000 employees around the world and manages about 87,000 projects in Google Cloud. Veolia initiated a one-time cleanup exercise of its production projects, using the data from IAM Recommender to get a better understanding of risk and to facilitate decision making with project owners.</p>
+
+<p class="wp-block-paragraph"><em>“IAM Recommender helped us confidently reduce 1.2 million permissions across production in an initial cleanup exercise that secured over 1,000 user and service accounts—all of which reduces the likelihood of a successful attack.”</em>&nbsp;-Veolia Group</p>
+
+<p class="wp-block-paragraph">You can hear more about Veolia’s journey at our Google Cloud Next ‘20: OnAir Breakout Session,&nbsp;<a href="http://cloud.withgoogle.com/next/sf/sessions?session=SEC222" target="_blank" rel="noreferrer noopener">Using Policy Intelligence to Achieve Least Privilege Access</a>.</p>
+
+<p class="wp-block-paragraph">Customers like Uber have developed innovative solutions on top of IAM Recommender to automate their security apparatus. Uber uses IAM Recommender to remove Editor roles on a daily basis using a risk engine that determines which role removals can be automated and which need a human check. For all changes, a JIRA ticket is opened for auditability and tracking purposes.</p>
+
+<p class="wp-block-paragraph"><em>“IAM Recommender helped us identify a significant number of over-assigned permissions in our GCP infrastructure and was instrumental in getting us closer to our goal of achieving least privilege.”</em>&nbsp;-Uber</p>
+
+<p class="wp-block-paragraph">You can hear more about Uber’s architecture at our&nbsp;<a href="http://cloud.withgoogle.com/next/sf/sessions?session=SEC216" target="_blank" rel="noreferrer noopener">Minimizing Permissions Using IAM Recommender</a>&nbsp;Breakout Session.</p>
+
+<h3 class="wp-block-heading">Best practices for getting started</h3>
+
+<p class="wp-block-paragraph">Through our work with Uber, Veolia, and others, we’ve discovered some best practices that can help ease the process of achieving least privilege.</p>
+
+<p class="wp-block-paragraph"><strong>#1 Mitigate lateral movement threats<br /></strong>If you have several projects, a good place to start is to develop a prioritization framework to identify the severity or ranking for the recommendations to help you understand which ones to apply first. We suggest beginning with looking at role bindings that give the iam.service.actAs permission on projects and Service Accounts. This permission allows a principal to execute code as a&nbsp;<a href="https://cloud.google.com/iam/docs/service-accounts">service account</a>, and potentially leverage it to access resources that the principal shouldn’t have access to. Doing this helps protect against the threat of lateral movement through service account impersonation.</p>
+
+<p class="wp-block-paragraph"><strong>#2 Migrate from legacy roles<br /></strong>We don&#8217;t recommend using legacy Owner (roles/owner) and Editor (roles/editor) roles. Use IAM Recommender to scope down access to finer-grained roles. IAM Recommender provides a migration path from these legacy roles to multiple smaller roles, which is especially important for service accounts that get the Editor role by default.</p>
+
+<p class="wp-block-paragraph"><strong>#3 Analyze recommendations using big data analytics<br /></strong>We now support out-of-the box integration with BigQuery. This allows you to export all your recommendations to a BigQuery table for further analysis with Google tools like Data Studio. You can use this technique to create org-wide custom reports. For example, if you want a view of over-provisioning across your production workloads, or if you want to analyze permission usage for a given service account, you can easily do that now.</p>
+
+<p class="wp-block-paragraph"><strong>#4 Establish a governance process for review<br /></strong>Export these recommendations to an identity governance and administration or access certification tool. This will help you speed up your quarterly resource owner or user manager attestations.&nbsp;</p>
+
+<p class="wp-block-paragraph"><strong>#5 Identify candidate use cases for automation<br /></strong>Once you’ve performed an initial cleanup, identify candidate use cases for automation. Examples of these can be members with Owner/Editor roles or orphaned users. This lets you empower engineers and project owners; they no longer need to worry about asking for too much or making a mistake. You should be able to take away excess permissions automatically because the data was compelling the first time around. You can then strive to bring in an increased awareness of risk and drive for cultural change towards a more equitable balance of speed and security.</p>
+
+<p class="wp-block-paragraph">Check out our&nbsp;<a href="https://cloud.google.com/iam/docs/recommender-best-practices">IAM Recommender best practices</a>&nbsp;page for more information.</p>
+
+<h3 class="wp-block-heading">Learn more</h3>
+
+<p class="wp-block-paragraph">Before the cloud, if you wanted to minimize your permissions towards least privilege, you would have probably plugged your data into a role mining tool or spreadsheet, and a team would have then spent weeks in analysis. We have cut all that time and effort—these recommendations are ML generated and can be immediately applied—and done all the heavy lifting collecting and correlating data in the back end.&nbsp;</p>
+
+<p class="wp-block-paragraph">Here’s a video about how it works:</p>
+
+<figure class="wp-block-embed-youtube wp-block-embed is-type-rich wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
+<span class="embed-youtube" style="text-align:center; display: block;"><iframe class="youtube-player" width="1084" height="610" src="https://www.youtube.com/embed/SG0X0IoS9MI?version=3&rel=1&showsearch=0&showinfo=1&iv_load_policy=1&fs=1&hl=en&autohide=2&wmode=transparent" allowfullscreen="true" style="border:0;" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation allow-popups-to-escape-sandbox"></iframe></span>
+</div></figure>
+
+<p class="wp-block-paragraph">For a behind-the-scenes look into how we did it, continue to our second blog,&nbsp;<a href="https://cloud.google.com/blog/products/identity-security/the-security-analytics-that-deliver-iam-recommendations">Under the hood: The security analytics that drive IAM recommendations on Google Cloud</a>, and check out&nbsp;<a href="https://cloud.google.com/blog/products/identity-security/exploring-the-machine-learning-models-behind-cloud-iam-recommender">Exploring the machine learning models behind Cloud IAM Recommender</a>&nbsp;for a deeper dive.</p>
+
+<p class="wp-block-paragraph">Click the following links to learn more about&nbsp;<a href="https://cloud.google.com/iam/docs/recommender-overview">IAM Recommender</a>&nbsp;and&nbsp;<a href="http://cloud.google.com/solutions/active-assist">Active Assist</a>. If you want to see first-hand how our customers solved for least privilege, be sure to attend one of our Google Cloud Next ‘20: OnAir sessions:</p>
+
+<ul class="wp-block-list"><li><a href="http://cloud.withgoogle.com/next/sf/sessions?session=SEC216" target="_blank" rel="noreferrer noopener">Uber: Minimizing Permissions Using IAM Recommender</a></li><li><a href="http://cloud.withgoogle.com/next/sf/sessions?session=SEC222" target="_blank" rel="noreferrer noopener">Veolia: Using Policy Intelligence to Achieve Least Privilege Access</a></li><li><a href="https://cloud.withgoogle.com/next/sf/sessions?gate=true&session=CMP100#infrastructure" target="_blank" rel="noreferrer noopener">Active Assist: Cloud is Complex. Managing It Shouldn’t Be</a></li></ul>
+
+<p class="wp-block-paragraph"></p>
+</div><span class="sd-text-color"></span><a class="sd-link-color"></a></div>

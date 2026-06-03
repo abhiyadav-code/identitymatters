@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import Icon from '../../components/Icon.astro';
+import { url } from '../../lib/url';
+import { articles, articleSlug, hasNativePage } from '../../data/site';
+
+const bodies = import.meta.glob('../../content/articles/*.html', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+export function getStaticPaths() {
+  return articles.filter(hasNativePage).map((a) => ({
+    params: { slug: articleSlug(a) },
+    props: { article: a },
+  }));
+}
+
+const { article } = Astro.props;
+const slug = articleSlug(article);
+const raw = bodies[`../../content/articles/${slug}.html`] ?? '';
+
+// Base-resolve local asset paths embedded in the migrated body.
+const prefix = url('/');
+const body = raw
+  .replaceAll('src="/images/', `src="${prefix}images/`)
+  .replaceAll('src="/audio/', `src="${prefix}audio/`);
+
+const kindLabel =
+  article.kind === 'audio' ? 'Listen' : article.kind === 'pdf' ? 'White paper' : 'Article';
+---
+
+<BaseLayout title={article.title} description={article.excerpt}>
+  <!-- Minimal article-page nav -->
+  <nav class="nav scrolled apx-nav">
+    <a class="brand" href={url('/')}>
+      <span class="mono">AY</span>
+      <span>Abhi Yadav</span>
+    </a>
+    <div class="nav-links">
+      <a href={`${url('/')}#writing`}>← All writing</a>
+    </div>
+  </nav>
+
+  <article class="apx">
+    <div class="wrap-narrow apx-head">
+      <span class="eyebrow">{article.cat}</span>
+      <h1 class="display apx-title">{article.title}</h1>
+      <div class="apx-meta">
+        {article.date} &nbsp;·&nbsp; {article.source}
+      </div>
+    </div>
+
+    {article.img && (
+      <div class="wrap apx-hero">
+        <img src={url(article.img)} alt="" loading="eager" />
+      </div>
+    )}
+
+    <div class="wrap-narrow apx-prose" set:html={body} />
+
+    <div class="wrap-narrow apx-foot">
+      <a class="btn btn-ghost" href={`${url('/')}#writing`}>← Back to all writing</a>
+      <a class="btn btn-primary" href={article.url} target="_blank" rel="noopener">
+        View the original {kindLabel.toLowerCase() === 'article' ? 'publication' : 'source'} <Icon name="ext" />
+      </a>
+    </div>
+  </article>
+
+  <SiteFooter linkHome />
+</BaseLayout>
+
+<style>
+  .apx-nav { position: static; }
+  .apx { padding-top: clamp(28px, 6vw, 56px); padding-bottom: clamp(40px, 8vw, 90px); }
+  .apx-head { text-align: left; }
+  .apx-title {
+    font-size: clamp(2rem, 4.6vw, 3.2rem);
+    line-height: 1.08;
+    margin: 0.5em 0 0.2em;
+  }
+  .apx-meta {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .apx-hero {
+    margin: clamp(28px, 5vw, 48px) auto;
+  }
+  .apx-hero img {
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    box-shadow: var(--card-shadow);
+  }
+
+  /* Migrated WordPress body */
+  .apx-prose { font-size: 1.12rem; line-height: 1.75; color: var(--ink); }
+  .apx-prose :global(p) { margin: 0 0 1.3em; }
+  .apx-prose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .apx-prose :global(a:hover) { color: var(--accent-2); }
+  .apx-prose :global(h2),
+  .apx-prose :global(h3) {
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-tracking);
+    line-height: 1.2;
+    margin: 1.8em 0 0.5em;
+  }
+  .apx-prose :global(h2) { font-size: 1.7rem; }
+  .apx-prose :global(h3) { font-size: 1.3rem; }
+  .apx-prose :global(ul),
+  .apx-prose :global(ol) { margin: 0 0 1.3em; padding-left: 1.3em; }
+  .apx-prose :global(li) { margin-bottom: 0.5em; }
+  .apx-prose :global(blockquote) {
+    margin: 1.6em 0;
+    padding: 0.4em 0 0.4em 1.4em;
+    border-left: 3px solid var(--accent);
+    color: var(--muted);
+    font-style: italic;
+  }
+  .apx-prose :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    margin: 1.4em 0;
+  }
+  .apx-prose :global(figure) { margin: 1.6em 0; }
+  .apx-prose :global(figcaption) {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.5em;
+    text-align: center;
+  }
+  .apx-prose :global(audio) { width: 100%; margin: 1.5em 0; }
+  /* Responsive embeds (e.g. YouTube) */
+  .apx-prose :global(iframe) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+    border-radius: var(--radius);
+    margin: 1.6em 0;
+    display: block;
+  }
+  .apx-prose :global(pre) {
+    background: var(--surface-2);
+    padding: 1.1em 1.25em;
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    font-size: 0.92rem;
+  }
+
+  .apx-foot {
+    margin-top: clamp(36px, 6vw, 60px);
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+</style>

@@ -1,0 +1,50 @@
+<p class="wp-block-paragraph">This is a repost of <a href="https://cloud.google.com/blog/products/identity-security/the-security-analytics-that-deliver-iam-recommendations">the blog</a> I wrote on Google&#8217;s Cloud Blog site</p>
+
+<p class="wp-block-paragraph"><a href="https://cloud.google.com/iam/docs/recommender-overview">IAM Recommender</a> helps security professionals enforce the principle of <a href="https://cloud.google.com/iam/docs/using-iam-securely">least privilege</a> by identifying and removing unwanted access to Google Cloud Platform (GCP) resources. In our <a href="https://cloud.google.com/blog/products/identity-security/achieve-least-privilege-with-less-effort-using-iam-recommender">previous blog</a>, we described some best practices for achieving least privilege with less effort using IAM Recommender—which uses machine learning to help determine what users actually need by analyzing their permission use over a 90-day period. </p>
+
+<p class="wp-block-paragraph">In this post we’ll peek under the hood to see how IAM Recommender works, with the help of a step-by-step example.</p>
+
+<h3 class="wp-block-heading">A DIY approach</h3>
+
+<p class="wp-block-paragraph">For a little more background, IAM Recommender generates daily policy recommendations and serves them to users automatically. Google collects the logs, correlates data, and recommends a modified IAM policy to minimize risk. We then surface these results in various places to ensure visibility: in-context in the IAM Permissions page in Cloud Console, through a Recommendations Hub in Cloud Console, and through BigQuery.</p>
+
+<p class="wp-block-paragraph">Let’s think through what building an analytics system that does all of this from the ground up would require:&nbsp;</p>
+
+<ol class="wp-block-list"><li>You first need to build an entitlements warehouse that periodically collects normalized role bindings for all your resources, so you’ll need to pay attention to hierarchies and inherited role bindings.</li><li>Then, to ensure your recommendations don’t break any existing workloads, you’ll need to collect and build telemetry to determine which permissions have been used recently. You can do this by storing&nbsp;<a href="https://cloud.google.com/audit-logs">Cloud Audit Logs</a>&nbsp;data access logs for the resources you want to analyze. This, however, is a very high volume of log data that comes at a cost, and the analysis is non-trivial; it requires series log processing, parsing, and normalization, and aggregation.</li><li>You will sometimes find gaps in your access logs data, which could arise from sporadic individual behaviors such as users taking vacations or changing projects. You’ll need to use machine learning to plug these gaps, which is also not trivial because of high-dimensions and sparse features of the training data.</li><li>To ensure you build for business continuity, you’ll need to build in monitoring and controls, and add provisions for break-glass.</li><li>Once this work is done, you can use the analytics pipeline to analyze utilization against policy data to determine which permissions are safe to remove. You might want to enhance this with machine learning to predict future permission needs to ensure users don’t have to come back for additional access.</li><li>Lastly, once you’ve determined the right sets of permissions, roles, conditions, and resources, you’ll need to come up with a model that ranks the best IAM policy to meet your users’ needs.</li></ol>
+
+<p class="wp-block-paragraph">We wanted to empower you with actionable intelligence while saving all of this effort. The end result is&nbsp;<a href="http://cloud.google.com/solutions/active-assist">Active Assist</a>&nbsp;which does this analysis for you at Google scale.&nbsp;</p>
+
+<p class="wp-block-paragraph">But, even if you were able to do all of this, you could only analyze your own data. We’re able to gain additional insight from cross-customer analysis, further identifying gaps and potential misconfigurations in your policies before they can become a problem. Google Cloud proactively protects the privacy of our users during this analysis with techniques that are described in detail in our blog&nbsp;<a href="https://cloud.google.com/blog/products/identity-security/exploring-the-machine-learning-models-behind-cloud-iam-recommender">here</a>.</p>
+
+<p class="wp-block-paragraph">Let’s look a little deeper into our implementation.</p>
+
+<h3 class="wp-block-heading">Safe to apply</h3>
+
+<p class="wp-block-paragraph">When we launched this product, a key consideration was to ensure recommendations were safe to apply—that they wouldn’t break workloads. Making safe recommendations depends on having high-quality input data. IAM Recommender analyzes authorization telemetry data to compute policy utilization and make subsequent recommendations.&nbsp;</p>
+
+<p class="wp-block-paragraph">At Google Cloud, our production systems take care of processing and ensure data quality and freshness directly from the source of the logs. Importantly, IAM Recommender does this for all customers at scale, which is more efficient than each customer doing it on their own. We collect and store petabytes of logs data to enable this functionality, at no additional charge.</p>
+
+<p class="wp-block-paragraph">But authorization logs only tell a part of the story. In Google Cloud, resources can be organized&nbsp;<a href="https://cloud.google.com/iam/docs/resource-hierarchy-access-control">hierarchically</a>, where a child resource inherits the IAM policy attached to a parent. To make accurate recommendations, we also apply attributed inheritance data in our analytics.&nbsp;</p>
+
+<p class="wp-block-paragraph">To ensure the quality of our recommendations, we built comprehensive monitoring and alerting systems with detection and validation scripts. We then automated these checks with ML to measure new recommendations against baselines. These checks against baselines ensure the analytics pipeline from the upstream input data to downstream dependencies are safe to apply. If we detect deviation from baselines, preventative measures kick in to halt the pipeline to ensure we are serving reliable recommendations.</p>
+
+<h3 class="wp-block-heading">ML security analytics at petabyte scale</h3>
+
+<p class="wp-block-paragraph">To provide recommendations, we developed a multi-stage pipeline using Google Cloud’s&nbsp;<a href="https://cloud.google.com/dataflow">Dataflow</a>&nbsp;processing engine. To get a sense of scale, Cloud IAM is a planet-scale authorization engine that processes hundreds of millions of authorization requests every second. IAM Recommender ingests these authorization logs and generates and re-validates hundreds of millions of recommendations daily to serve the best results to our customers. Google Cloud’s scalable infrastructure allows us to provide this service cost-effectively.</p>
+
+<p class="wp-block-paragraph">Our system performs detailed policy utilization analysis that replays authorization logs with the latest policy config snapshot and resource metadata on a daily basis. This data is fed into our ML training models, and the output is piped into policy utilization&nbsp;<a href="https://cloud.google.com/recommender/docs/insights/iam-insights">insights</a>&nbsp;that support&nbsp;<a href="https://cloud.google.com/iam/docs/recommender-overview">recommendations</a>. We then use privacy-preserving ML techniques that plug gaps in observation data, which could be due to a recommendation variant, system outage, or other issue. (Check out this&nbsp;<a href="https://cloud.google.com/blog/products/identity-security/exploring-the-machine-learning-models-behind-cloud-iam-recommender">blog</a>&nbsp;to explore these ML techniques in more depth.)</p>
+
+<h3 class="wp-block-heading">Balancing the tradeoff between risk and complexity</h3>
+
+<p class="wp-block-paragraph">IAM Recommender uses a cost function to determine the set of roles that cover the needed permission set, ranks the roles by their security risk, and picks the least risky one. Determining the minimum set of roles is equivalent to the&nbsp;<a href="https://en.wikipedia.org/wiki/Set_cover_problem" target="_blank" rel="noreferrer noopener">NP-complete set cover</a>&nbsp;problem. To cut down on overhead, the approach optimizes for recurring patterns across multiple projects in a given organization, reducing permissions while maximizing role membership.&nbsp;</p>
+
+<p class="wp-block-paragraph">In some cases we determine the best role is one that hasn’t been created yet—though our systems do find opportunities for reuse across your organization—and in these cases we recommend creating a custom role.</p>
+
+<h3 class="wp-block-heading">Learn more</h3>
+
+<p class="wp-block-paragraph">To learn more about IAM Recommender, check out the&nbsp;<a href="https://cloud.google.com/iam/docs/recommender-overview">documentation</a>&nbsp;and our blog about&nbsp;<a href="https://cloud.google.com/blog/products/identity-security/exploring-the-machine-learning-models-behind-cloud-iam-recommender">Exploring the machine learning models behind Cloud IAM Recommender</a>. To learn more about Active Assist, visit our&nbsp;<a href="http://cloud.google.com/solutions/active-assist">website</a>.&nbsp;</p>
+
+<p class="wp-block-paragraph">To see how our customers solved for least privilege, check out one of our Google Cloud Next ‘20: OnAir sessions:</p>
+
+<ul class="wp-block-list"><li><a href="http://cloud.withgoogle.com/next/sf/sessions?session=SEC216" target="_blank" rel="noreferrer noopener">Minimizing Permissions Using IAM Recommender</a></li><li><a href="http://cloud.withgoogle.com/next/sf/sessions?session=SEC222" target="_blank" rel="noreferrer noopener">Using Policy Intelligence to Achieve Least Privilege Access</a></li><li><a href="https://cloud.withgoogle.com/next/sf/sessions?gate=true&session=CMP100#infrastructure" target="_blank" rel="noreferrer noopener">Cloud is Complex. Managing It Shouldn’t Be</a></li></ul>
+</div><span class="sd-text-color"></span><a class="sd-link-color"></a></div>

@@ -77,15 +77,15 @@ export const upcoming = {
 
 export const talks = [
   { event: 'Gartner IAM Summit', place: 'Las Vegas', topic: 'Improving customer engagement with innovations in consumer identity systems, including blockchain identity.', url: 'http://www.gartner.com/events/na/identity-access-management' },
-  { event: 'IBM InterConnect 2017', place: 'Las Vegas · March', topic: 'Digital Customer Engagement in an Untrusted World.', url: 'https://myibm.ibm.com/events/interconnect/all-sessions/session/7525A' },
-  { event: 'RSA Conference 2017', place: 'San Francisco', topic: 'On the topic of Identity Assurance.', url: '' },
-  { event: 'Oracle OpenWorld 2016', place: 'San Francisco', topic: 'A modern approach to an identity-based security operations center.', url: '' },
+  { event: 'IBM InterConnect', place: 'Las Vegas', topic: 'Digital Customer Engagement in an Untrusted World.', url: 'https://myibm.ibm.com/events/interconnect/all-sessions/session/7525A' },
+  { event: 'RSA Conference', place: 'San Francisco', topic: 'On the topic of Identity Assurance.', url: '' },
+  { event: 'Oracle OpenWorld', place: 'San Francisco', topic: 'A modern approach to an identity-based security operations center.', url: '' },
   { event: 'European Identity Conference', place: 'Munich', topic: 'Access Intelligence: The New Standard Feature of Access Governance?', url: 'https://www.kuppingercole.com/watch/eic13_session_aipanel_15051500' },
-  { event: 'Cupertino IAM User Group', place: 'Cupertino · October', topic: 'Recent developments of trust frameworks and identity proofing.', url: 'https://www.meetup.com/Cupertino-IAM-User-Group-Meetup/' },
-  { event: 'San Francisco IAM User Group', place: 'San Francisco · May 2017', topic: 'Identity & access community meetup.', url: '' },
-  { event: 'Sun CEC Conference 2008', place: 'Las Vegas', topic: 'Achieving Access Control Compliance.', url: '' },
+  { event: 'Cupertino IAM User Group', place: 'Cupertino', topic: 'Recent developments of trust frameworks and identity proofing.', url: 'https://www.meetup.com/Cupertino-IAM-User-Group-Meetup/' },
+  { event: 'San Francisco IAM User Group', place: 'San Francisco', topic: 'Identity & access community meetup.', url: '' },
+  { event: 'Sun CEC Conference', place: 'Las Vegas', topic: 'Achieving Access Control Compliance.', url: '' },
   { event: 'Sun Americas Conference', place: 'USA', topic: 'Understanding Roles and Identity Management.', url: '' },
-  { event: 'Immersion Week 2007', place: 'USA', topic: 'Best Practices for Role Management.', url: '' },
+  { event: 'Immersion Week', place: 'USA', topic: 'Best Practices for Role Management.', url: '' },
 ];
 
 export const articles: Article[] = [

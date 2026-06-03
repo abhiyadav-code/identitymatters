@@ -63,9 +63,11 @@ const kindLabel =
 
     <div class="wrap-narrow apx-foot">
       <a class="btn btn-ghost" href={`${url('/')}#writing`}>← Back to all writing</a>
-      <a class="btn btn-primary" href={article.url} target="_blank" rel="noopener">
-        View the original {kindLabel.toLowerCase() === 'article' ? 'publication' : 'source'} <Icon name="ext" />
-      </a>
+      {article.url && (
+        <a class="btn btn-primary" href={article.url} target="_blank" rel="noopener">
+          View the original {kindLabel.toLowerCase() === 'article' ? 'publication' : 'source'} <Icon name="ext" />
+        </a>
+      )}
     </div>
   </article>
 

@@ -1,76 +1,85 @@
-# Identity Matters
+# Identity Matters — how to edit the site
 
-The personal site & blog of **Abhi Yadav** — essays and talks on identity & access
-management. Built with [Astro](https://astro.build), hosted free on GitHub Pages, served
-at **identitymatters.blog**.
+The personal site of **Abhi Yadav**, live at **identitymatters.blog**. Built with
+[Astro](https://astro.build), hosted free on GitHub Pages. No WordPress, no database —
+just plain text files.
 
-No WordPress, no database, no comments/trackers. Everything is plain text files you (or
-Claude) can edit.
+**Everything auto-publishes:** any change pushed to the `main` branch rebuilds and
+deploys to identitymatters.blog in ~30 seconds (via GitHub Actions). No manual steps.
 
 ---
+
+## The easiest way: just ask Claude
+
+Open Claude in this folder and describe the change in plain English:
+- *"Change my title to Senior Product Manager."*
+- *"Add a talk: RSA Conference 2026, San Francisco, on passkeys."*
+- *"Here's a new article, please add it: …"*
+
+Claude edits the right files, commits, and it goes live. You don't need to touch code.
+
+If you'd rather do it yourself, here's the map.
+
+## Where everything lives
+
+| What you want to change | File |
+| --- | --- |
+| Name, title, hero text, bio paragraphs, the Feynman quote, email, social links | `src/data/site.ts` → `person`, `story` |
+| Career timeline | `src/data/site.ts` → `timeline` |
+| Expertise cards | `src/data/site.ts` → `expertise` |
+| Speaking: upcoming banner, video talks, talk list | `src/data/site.ts` → `upcoming`, `videos`, `talks` |
+| The article list (titles, dates, summaries, thumbnails) | `src/data/site.ts` → `articles` |
+| The full text of one article | `src/content/articles/<slug>.html` |
+| Images | `public/images/` |
+| Audio | `public/audio/` |
+| Colors & fonts | `src/styles/site.css` — the `:root[data-direction="warm"][data-theme="light"]` block near the top |
+
+Most edits are just changing text inside `src/data/site.ts` — save, push, done.
+
+## Add a new article
+
+Three small pieces (or just send Claude the text and it does all three):
+
+1. **Thumbnail** → `public/images/articles/<slug>.jpg`
+   The `<slug>` part of the filename becomes the page URL (`/writing/<slug>/`).
+2. **Body** → `src/content/articles/<slug>.html`
+   Plain HTML: `<p>…</p>`, `<h2>…</h2>`, `<a href>`, `<img src="/images/…">`, etc.
+3. **An entry at the top of the `articles` array** in `src/data/site.ts`:
+
+```ts
+{
+  title: 'My New Article',
+  date: 'Jun 5, 2026', year: '2026',
+  cat: 'IAM', kind: 'article',
+  img: '/images/articles/my-new-article.jpg',
+  url: '',                       // an external "original", if any — leave '' for a new piece
+  source: 'Identity Matters',
+  excerpt: 'One-paragraph summary shown on the card and the preview popup.',
+}
+```
+
+Newest entries go first. Notes:
+- `kind: 'audio'` + an `<audio>` tag in the body → native player (put the mp3 in `public/audio/`).
+- `kind: 'pdf'` + an external `url` → the card links straight to that PDF (no native page).
+
+## Three ways to make an edit
+
+1. **Ask Claude** (easiest) — describe it; Claude edits and commits.
+2. **GitHub web editor** — open the file at `github.com/abhiyadav-code/identitymatters`,
+   click the ✏️ pencil, edit, then **Commit changes**. Auto-deploys.
+3. **On your computer** — `npm install` once, then `npm run dev` to preview at
+   `localhost:4321`, edit, and `git push`.
 
 ## Run it locally
 
 ```bash
 npm install      # first time only
-npm run dev      # http://localhost:4321
-npm run build    # produce the static site in ./dist
+npm run dev      # preview at http://localhost:4321
+npm run build    # build the static site into ./dist
 ```
 
-## Where things live
+## Hosting & domain
 
-| What | Where |
-| --- | --- |
-| Blog posts | `src/content/blog/*.md` |
-| Speaking engagements | `src/content/speaking/*.md` |
-| Publications | `src/content/publications/*.md` |
-| Images & audio | `public/images/`, `public/audio/` |
-| Page templates | `src/pages/` |
-| Site-wide look (colors, fonts) | `src/styles/global.css` (top of file) |
-| Bio text | `src/pages/about.astro` |
-
-## Add a blog post
-
-Create `src/content/blog/my-post-slug.md`:
-
-```markdown
----
-title: 'My Post Title'
-description: 'One or two sentence summary shown on cards and previews.'
-pubDate: 2026-06-01
-heroImage: '/images/covers/my-post-slug.svg'   # optional
-heroAlt: 'Describe the image'                   # optional
-audio: '/audio/my-post.mp3'                     # optional — adds a player
-featured: true                                   # optional — show on home page
----
-
-Write the article in **Markdown**. Images: `![alt text](/images/my-pic.jpg)`.
-```
-
-The filename (minus `.md`) becomes the URL: `/writing/my-post-slug/`.
-
-## Add a speaking engagement
-
-Create `src/content/speaking/event-slug.md`:
-
-```markdown
----
-event: 'Conference Name'
-title: 'My talk title'          # optional
-date: 2026-09-15                # used for ordering
-dateLabel: 'September 2026'     # optional human-friendly label
-location: 'City, Country'       # optional
-link: 'https://...'             # optional
-upcoming: true                  # optional — pins it to the "Upcoming" section
----
-```
-
-## Publish
-
-Every push to the `main` branch on GitHub auto-builds and deploys via GitHub Actions
-(`.github/workflows/deploy.yml`). No manual steps.
-
-## Custom domain
-
-`public/CNAME` points the site at `identitymatters.blog`. DNS is managed at the registrar
-(WordPress.com) — see the launch checklist in the project notes.
+Served at the apex domain **identitymatters.blog** via GitHub Pages (`public/CNAME` +
+the repo's Pages custom-domain setting). The deploy workflow is
+`.github/workflows/deploy.yml` and builds with `DEPLOY_TARGET=production`.

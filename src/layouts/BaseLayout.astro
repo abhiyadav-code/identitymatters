@@ -1,61 +1,54 @@
 ---
-import '../styles/global.css';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
+import '../styles/site.css';
 import { url } from '../lib/url';
+import { person } from '../data/site';
 
 interface Props {
   title?: string;
   description?: string;
-  image?: string;
 }
 
 const {
-  title,
-  description = 'Abhi Yadav on identity & access management — essays, talks, and ideas on the future of digital identity.',
-  image = '/images/og-default.png',
+  title = `${person.name} — ${person.field}`,
+  description =
+    'Abhi Yadav — Product Manager at Google. Writing, speaking and research on digital identity, access management and security.',
 } = Astro.props;
 
-const siteName = 'Identity Matters';
-const fullTitle = title ? `${title} · ${siteName}` : `${siteName} — Abhi Yadav`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en">
+<html
+  lang="en"
+  data-direction="warm"
+  data-theme="light"
+  data-font="newsreader"
+  data-density="comfortable"
+>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
     <link rel="sitemap" href={url('/sitemap-index.xml')} />
     <link rel="canonical" href={canonical} />
 
-    <title>{fullTitle}</title>
+    <title>{title}</title>
     <meta name="description" content={description} />
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={fullTitle} />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content={siteName} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL(image, Astro.site)} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Fonts: Fraunces (serif headings) + Inter (sans body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,560;9..144,600&family=Inter:wght@400;500;600;650&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Space+Grotesk:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
-    <a href="#main" class="visually-hidden">Skip to content</a>
-    <Nav />
-    <main id="main">
-      <slot />
-    </main>
-    <Footer />
+    <slot />
   </body>
 </html>

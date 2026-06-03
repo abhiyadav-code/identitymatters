@@ -1,166 +1,346 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostCard from '../components/PostCard.astro';
+import Icon from '../components/Icon.astro';
 import { url } from '../lib/url';
+import {
+  person,
+  story,
+  timeline,
+  expertise,
+  videos,
+  upcoming,
+  talks,
+  articles,
+} from '../data/site';
 
-const posts = (await getCollection('blog'))
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const featured = posts.slice(0, 3);
-
-const talks = (await getCollection('speaking')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
-const talkHighlights = talks.slice(0, 4);
+const phLabel = (t: string) => (t.length > 42 ? t.slice(0, 40) + '…' : t);
+const readLabel = (kind: string) =>
+  kind === 'pdf' ? 'View PDF' : kind === 'audio' ? 'Listen' : 'Read';
 ---
 
 <BaseLayout>
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container hero-inner">
-      <div class="hero-text">
-        <p class="eyebrow">Identity &amp; Access Management</p>
-        <h1>Hi, I’m Abhi Yadav.</h1>
-        <p class="lede">
-          For 15+ years I’ve worked alongside the people building the future of
-          digital identity — from early access-control startups to Sun
-          Microsystems and the cloud. I write and speak about identity as the new
-          control plane for security.
-        </p>
-        <p class="hero-sub muted">
-          I believe in the Feynman technique: the best way to understand
-          something is to teach it. This is where I do that — vendor-neutral,
-          opinions my own.
-        </p>
-        <div class="hero-cta">
-          <a href={url('/writing')} class="btn btn-primary">Read the writing</a>
-          <a href={url('/about')} class="btn btn-ghost">About me</a>
-        </div>
-      </div>
-
-      <div class="hero-portrait" aria-hidden="true">
-        <!-- Replace src with a real headshot during content migration. -->
-        <img src={url('/images/headshot.svg')} alt="" width="320" height="320" />
+  <!-- ===== Nav ===== -->
+  <nav class="nav" id="site-nav">
+    <a class="brand" href="#top" data-scroll="top">
+      <span class="mono">AY</span>
+      <span>{person.name}</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about" data-scroll="about">About</a>
+      <a href="#expertise" data-scroll="expertise">Expertise</a>
+      <a href="#speaking" data-scroll="speaking">Speaking</a>
+      <a href="#writing" data-scroll="writing">Writing</a>
+      <div class="nav-social">
+        <a href={person.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" /></a>
+        <a href={person.social.x} target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>
+        <a href={person.social.github} target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
       </div>
     </div>
-  </section>
+  </nav>
 
-  <!-- Featured writing -->
-  <section class="section container">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow">Writing</p>
-        <h2>Recent essays</h2>
-      </div>
-      <a href={url('/writing')} class="see-all">All articles →</a>
-    </div>
-
-    <div class="card-grid">
-      {featured.map((post) => (
-        <PostCard
-          href={`/writing/${post.id}/`}
-          title={post.data.title}
-          description={post.data.description}
-          pubDate={post.data.pubDate}
-          heroImage={post.data.heroImage}
-          heroAlt={post.data.heroAlt}
-          hasAudio={Boolean(post.data.audio)}
-        />
-      ))}
-    </div>
-  </section>
-
-  <!-- Speaking highlights -->
-  <section class="section-tight speaking-band">
-    <div class="container">
-      <div class="section-head">
+  <!-- ===== Hero ===== -->
+  <header class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-grid">
         <div>
-          <p class="eyebrow">Speaking</p>
-          <h2>On stage &amp; in the room</h2>
+          <div class="eyebrow hero-eyebrow">{person.title} &nbsp;—&nbsp; {person.field}</div>
+          <h1>I help decide <span class="accent">who</span> gets access to <span class="accent">what</span>.</h1>
+          <p class="lede">{person.tagline}</p>
+          <div class="role">
+            <span class="pill">15+ years in identity</span>
+            <span class="pill">San Francisco</span>
+            <span class="pill">Writer &amp; speaker</span>
+          </div>
+          <div class="cta-row">
+            <button class="btn btn-primary" data-scroll="about">Read my story <Icon name="arrow" /></button>
+            <button class="btn btn-ghost" data-scroll="speaking">Watch a talk <Icon name="play" /></button>
+          </div>
         </div>
-        <a href={url('/speaking')} class="see-all">All engagements →</a>
+        <div class="hero-photo-wrap">
+          <img class="hero-photo" src={url(person.headshot)} alt={person.name} width="360" height="450" />
+          <div class="hero-badge"><span class="dot"></span> Available to speak</div>
+        </div>
       </div>
+    </div>
+  </header>
 
-      <ul class="talk-list">
-        {talkHighlights.map((t) => (
-          <li class="talk-row">
-            <span class="talk-date">{t.data.dateLabel ?? t.data.date.getFullYear()}</span>
-            <span class="talk-main">
-              <strong>{t.data.event}</strong>
-              {t.data.title && <span class="talk-topic">{t.data.title}</span>}
-            </span>
-            {t.data.location && <span class="talk-loc muted">{t.data.location}</span>}
-          </li>
-        ))}
-      </ul>
+  <!-- ===== About ===== -->
+  <section class="about" id="about">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">About</span>
+        <h2>A career spent making trust work.</h2>
+      </div>
+      <div class="about-grid">
+        <div class="story reveal">
+          {story.map((para) => <p>{para}</p>)}
+        </div>
+        <div class="reveal">
+          <blockquote class="pullquote">{person.pullquote}</blockquote>
+          <ul class="timeline">
+            {timeline.map((t) => (
+              <li>
+                {t.year && <div class="tl-year">{t.year}</div>}
+                <div class="tl-role">{t.role} <span>&nbsp;· {t.org}</span></div>
+                <div class="tl-note">{t.note}</div>
+              </li>
+            ))}
+          </ul>
+          <div class="affil">
+            {person.affiliations.map((a) => (
+              <a href={a.url} target="_blank" rel="noopener">
+                <span class="a-name">{a.name}</span>
+                <span class="a-full">{a.full}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- ===== Expertise ===== -->
+  <section id="expertise">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Expertise</span>
+        <h2>Depth across the identity stack.</h2>
+        <p>From the cryptographic plumbing of access control to the product strategy of identity at planet scale.</p>
+      </div>
+      <div class="exp-grid">
+        {expertise.map((e, i) => (
+          <div class="exp-card reveal" style={`transition-delay:${(i % 4) * 60}ms`}>
+            <span class="bar"></span>
+            <div class="exp-num">{String(i + 1).padStart(2, '0')}</div>
+            <h3>{e.title}</h3>
+            <p>{e.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Speaking ===== -->
+  <section class="speaking" id="speaking">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Speaking</span>
+        <h2>On stage &amp; on the record.</h2>
+        <p>I love public speaking — conferences, panels, and user groups across the identity community.</p>
+      </div>
+
+      <div class="upcoming-banner reveal">
+        <div class="ub-left">
+          <Icon name="spark" />
+          <div>
+            <div class="ub-tag">Upcoming</div>
+            <h3>{upcoming.name}</h3>
+          </div>
+        </div>
+        <div class="ub-when">{upcoming.when}</div>
+        <a class="ub-btn" href={upcoming.url} target="_blank" rel="noopener">Event details</a>
+      </div>
+
+      <div class="video-grid">
+        {videos.map((v, i) => (
+          <div class="video-card reveal" style={`transition-delay:${i * 70}ms`} data-video={i} role="button" tabindex="0" aria-label={`Play: ${v.title}`}>
+            <img src={`https://img.youtube.com/vi/${v.id}/hqdefault.jpg`} alt={v.title} loading="lazy" />
+            <div class="play"><span><Icon name="play" /></span></div>
+            <div class="vmeta">
+              <div class="vtag">{v.tag}</div>
+              <h4>{v.title}</h4>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="section-head reveal" style="margin-bottom:8px">
+        <span class="eyebrow">Selected talks</span>
+      </div>
+      <div class="talks-list">
+        {talks.map((t) => (
+          <div class="talk-row reveal">
+            <div>
+              <div class="talk-event">{t.event}</div>
+              <div class="talk-place">{t.place}</div>
+            </div>
+            <div class="talk-topic">{t.topic}</div>
+            {t.url
+              ? <a class="talk-link" href={t.url} target="_blank" rel="noopener">Event page <Icon name="ext" /></a>
+              : <span class="talk-link disabled">Past talk</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Writing ===== -->
+  <section id="writing">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Writing</span>
+        <h2>Essays, research &amp; field notes.</h2>
+        <p>Articles published here and on Google Cloud, Oracle and beyond — collected in one place.</p>
+      </div>
+      <div class="write-grid">
+        {articles.map((a, i) => (
+          <article class="article-card reveal" style={`transition-delay:${(i % 3) * 60}ms`} data-article={i} role="button" tabindex="0" aria-label={`Open: ${a.title}`}>
+            <div class="article-thumb">
+              <div class="ph">{phLabel(a.title)}</div>
+              {a.img && <img src={a.img} alt={a.title} loading="lazy" data-fallback />}
+            </div>
+            <div class="article-body">
+              <div class="article-date">{a.date}</div>
+              <h3>{a.title}</h3>
+              <p>{a.excerpt}</p>
+              <div class="article-foot">
+                <span class="article-source">{a.source}</span>
+                <span class="article-read">{readLabel(a.kind)} <Icon name="arrow" /></span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer" id="contact">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="eyebrow">Get in touch</span>
+        <h2 class="footer-cta">Let's talk identity, access &amp; trust.</h2>
+      </div>
+      <div class="footer-row">
+        <div class="footer-contact">
+          <div><div class="lbl">Email</div><a href={`mailto:${person.email}`}>{person.email}</a></div>
+          <div><div class="lbl">Location</div>{person.location}</div>
+        </div>
+        <div class="footer-social">
+          <a href={person.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" /></a>
+          <a href={person.social.x} target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>
+          <a href={person.social.github} target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
+          <a href={`mailto:${person.email}`} aria-label="Email"><Icon name="mail" /></a>
+        </div>
+      </div>
+      <p class="footer-fine">
+        Views expressed here are my own and do not represent those of my employer. &nbsp;·&nbsp;
+        © {new Date().getFullYear()} {person.name}. Built as a living archive of my writing &amp; talks.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Modal mount + data -->
+  <div id="modal-root"></div>
+  <script type="application/json" id="videos-data" set:html={JSON.stringify(videos)} is:inline></script>
+  <script type="application/json" id="articles-data" set:html={JSON.stringify(articles)} is:inline></script>
+
+  <script>
+    const $ = (s: string, r: ParentNode = document) => r.querySelector(s);
+    const ICON = {
+      close: '<path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-linecap="round"/>',
+      arrow: '<path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>',
+      ext: '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 01-1 1H6a1 1 0 01-1-1V8a1 1 0 011-1h5"/></g>',
+    };
+    const svg = (n: keyof typeof ICON) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
+
+    // ---- Nav scrolled state ----
+    const nav = $('#site-nav');
+    const onScroll = () => nav?.classList.toggle('scrolled', window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // ---- Smooth scroll to in-page sections ----
+    document.querySelectorAll<HTMLElement>('[data-scroll]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(el.dataset.scroll!);
+        if (target) window.scrollTo({ top: target.offsetTop - 64, behavior: 'smooth' });
+      });
+    });
+
+    // ---- Scroll reveal ----
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }),
+      { threshold: 0.14 },
+    );
+    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+    // ---- Article thumbnail fallback ----
+    document.querySelectorAll<HTMLImageElement>('img[data-fallback]').forEach((img) => {
+      img.addEventListener('error', () => { img.style.display = 'none'; });
+    });
+
+    // ---- Modals ----
+    const videos = JSON.parse($('#videos-data')!.textContent || '[]');
+    const articles = JSON.parse($('#articles-data')!.textContent || '[]');
+    const root = $('#modal-root')!;
+
+    function closeModal() {
+      root.innerHTML = '';
+      document.body.style.overflow = '';
+    }
+    function mount(html: string) {
+      root.innerHTML = html;
+      document.body.style.overflow = 'hidden';
+      const back = $('.modal-back', root) as HTMLElement;
+      back.addEventListener('click', (e) => { if (e.target === back) closeModal(); });
+      $('.modal-close', root)?.addEventListener('click', closeModal);
+    }
+    function openVideo(v: any) {
+      mount(`
+        <div class="modal-back">
+          <div class="modal-vid">
+            <button class="modal-close" aria-label="Close">${svg('close')}</button>
+            <div class="frame">
+              <iframe src="https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0" title="${v.title}"
+                allow="accelerated-sensors; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="cap">
+              <h4>${v.title}</h4>
+              <a class="talk-link" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">Open on YouTube ${svg('ext')}</a>
+            </div>
+          </div>
+        </div>`);
+    }
+    function esc(s = '') { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function openArticle(a: any) {
+      const isPdf = a.kind === 'pdf';
+      const head = a.img
+        ? `<img src="${a.img}" alt="" onerror="this.style.display='none';this.previousElementSibling.style.display='grid'" /><div class="ph" style="display:none">${esc(a.title)}</div>`
+        : `<div class="ph">${esc(a.title)}</div>`;
+      mount(`
+        <div class="modal-back">
+          <div class="modal-read">
+            <button class="modal-close" aria-label="Close">${svg('close')}</button>
+            <div class="rhead">${head}</div>
+            <div class="rbody">
+              <span class="rcat">${esc(a.cat)}</span>
+              <h2>${esc(a.title)}</h2>
+              <div class="rmeta">${esc(a.date)} &nbsp;·&nbsp; ${esc(a.source)}</div>
+              <p>${esc(a.excerpt)}</p>
+              <div class="rnote">This is a preview drawn from the original publication. Open the full piece to read it in its entirety.</div>
+              <div class="ractions">
+                <a class="btn btn-primary" href="${a.url}" target="_blank" rel="noopener">${isPdf ? 'Open the PDF' : 'Read the full article'} ${svg('arrow')}</a>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    const activate = (el: Element, fn: () => void) => {
+      el.addEventListener('click', fn);
+      el.addEventListener('keydown', (e) => {
+        const k = (e as KeyboardEvent).key;
+        if (k === 'Enter' || k === ' ') { e.preventDefault(); fn(); }
+      });
+    };
+    document.querySelectorAll<HTMLElement>('[data-video]').forEach((c) =>
+      activate(c, () => openVideo(videos[+c.dataset.video!])),
+    );
+    document.querySelectorAll<HTMLElement>('[data-article]').forEach((c) =>
+      activate(c, () => openArticle(articles[+c.dataset.article!])),
+    );
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+  </script>
 </BaseLayout>
-
-<style>
-  .hero { padding-block: clamp(2.5rem, 7vw, 5rem); }
-  .hero-inner {
-    display: grid;
-    grid-template-columns: 1.5fr 0.9fr;
-    gap: clamp(1.5rem, 5vw, 4rem);
-    align-items: center;
-  }
-  .hero h1 { margin-bottom: 1rem; }
-  .hero-sub { font-size: 1rem; margin-top: 0.75rem; max-width: 34rem; }
-  .hero-cta { display: flex; gap: 0.75rem; margin-top: 1.75rem; flex-wrap: wrap; }
-  .hero-portrait { justify-self: center; }
-  .hero-portrait img {
-    width: clamp(180px, 28vw, 300px);
-    height: auto;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid var(--paper);
-    box-shadow: var(--shadow-lift);
-    background: var(--accent-soft);
-  }
-
-  .section-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 1.75rem;
-  }
-  .section-head h2 { margin: 0; }
-  .see-all { font-weight: 600; font-size: 0.95rem; white-space: nowrap; }
-
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .speaking-band {
-    background: var(--cream-deep);
-    border-block: 1px solid var(--line);
-  }
-  .talk-list { list-style: none; margin: 0; padding: 0; }
-  .talk-row {
-    display: grid;
-    grid-template-columns: 8.5rem 1fr auto;
-    gap: 1rem;
-    align-items: baseline;
-    padding: 1rem 0;
-    border-top: 1px solid var(--line);
-  }
-  .talk-row:last-child { border-bottom: 1px solid var(--line); }
-  .talk-date { color: var(--accent-deep); font-weight: 600; font-size: 0.95rem; }
-  .talk-main { display: flex; flex-direction: column; gap: 0.15rem; }
-  .talk-topic { color: var(--ink-soft); font-size: 0.95rem; }
-  .talk-loc { font-size: 0.9rem; }
-
-  @media (max-width: 760px) {
-    .hero-inner { grid-template-columns: 1fr; text-align: left; }
-    .hero-portrait { order: -1; justify-self: start; }
-    .talk-row { grid-template-columns: 1fr; gap: 0.2rem; }
-    .talk-loc { order: 3; }
-  }
-</style>

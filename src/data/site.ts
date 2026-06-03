@@ -37,16 +37,20 @@ export const person = {
   ],
 };
 
-// Narrative paraphrased / drawn from Abhi's own "About" writing.
+// Narrative in Abhi's own words (see the site edit spec).
 export const story = [
   'My love for cybersecurity began during idle and harmless teenage years, at a time when the Internet was starting to come into its own. What a delight it was to use simple parlor tricks to show my friends that I could “guess” their passwords.',
-  'The turning point was the American Mars Rover mission in 1997, when I began to understand the power of technology to unite us in a shared purpose. I still remember the scratchy tones of the 92kbps modem running through the night as I downloaded pictures from Mars. It was then, I think, that I fell in love with technology.',
-  'My first job after college was at an enterprising startup that developed a novel way to solve access-control problems. Our success came not just from the quality of what we shipped, but from the close friendships that let us rely on each other and perform. In time we were acquired, and I found myself at Sun Microsystems — one of the best things that ever happened to me.',
-  "Since then I've been fortunate to work with some of the sharpest minds in this field: clients I learned from, architects I built standards with, and product leaders who shared their vision for identity. Today I carry that forward at Google, and through this writing, sprinkled with my own opinions on the subject.",
+  'The turning point was the Mars Pathfinder mission in 1997. I still remember the scratchy tones of the modem running through the night as I downloaded pictures from Mars. That, I think, is when I fell in love with technology.',
+  'My first job was at an enterprising startup that developed a novel way to solve access-control problems. Our success came not just from the quality of what we shipped, but from the close friendships that let us rely on each other and perform. In time we were acquired, and I found myself at Sun Microsystems — one of the best things that ever happened to me.',
+  'After Sun and Oracle, a few of us took a chance: we missed working with customers, so we joined a small team out to grow its identity business in Europe. I founded its international arms and spent those years on the road, building country by country until we’d become the largest identity-services shop around. A private equity acquisition followed, I made the leap into product, and then one day Google came knocking.',
+  'Google has been the longest and most defining chapter of my career — the one that shaped me most as a product leader. Working across Cloud, Ads, and the frameworks now shaping how AI is built, alongside some of the sharpest minds in the field: engineers, architects, and product leaders who’ve stretched my thinking and shared their vision for identity.',
+  'I try to pass some of it along here, sprinkled with my own opinions.',
 ];
 
 export const timeline = [
-  { year: 'Now', role: 'Product Manager', org: 'Google', note: 'Cloud IAM · access recommendations & least-privilege at scale' },
+  { year: 'Now', role: 'Product Manager', org: 'Google', note: 'Workforce IAM & Secure AI Framework · planet-scale identity for people and AI agents' },
+  { year: '', role: 'Product Manager', org: 'Google', note: 'Identity verification and trust-based customer experiences' },
+  { year: '', role: 'Product Manager', org: 'Google', note: 'Cloud IAM · ML-powered recommendations & least-privilege policies at scale' },
   { year: '', role: 'Product Leadership', org: 'Identity & Access', note: 'IDaaS, privileged access, and managed identity services' },
   { year: '', role: 'Engineer → Architect', org: 'Sun Microsystems', note: 'Role management, access governance, identity standards' },
   { year: 'Start', role: 'Early career', org: 'Access-control startup', note: 'A novel approach to access control — later acquired' },

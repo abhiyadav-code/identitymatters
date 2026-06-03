@@ -21,7 +21,7 @@ export const person = {
   tagline:
     'Building the systems that decide who gets access to what — and proving they can be trusted.',
   intro:
-    "For over fifteen years I've worked at the intersection of identity, access, and security — from an early access-control startup to Sun Microsystems, and today as a Product Manager at Google working on Cloud IAM. I write, speak, and teach about digital identity because I believe the best way to understand something is to explain it to someone else.",
+    "For over twenty years I've worked at the intersection of identity, access, and security — from an early access-control startup to Sun Microsystems, and today as a Product Manager at Google working on Cloud IAM. I write, speak, and teach about digital identity because I believe the best way to understand something is to explain it to someone else.",
   location: 'San Francisco, CA',
   email: 'abhimanyu.yadav@gmail.com',
   headshot: '/images/abhi-headshot.jpg',

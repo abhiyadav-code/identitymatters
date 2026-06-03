@@ -149,7 +149,7 @@ section { padding: var(--section-pad) 0; }
 
 .hero-photo-wrap { position:relative; justify-self:center; }
 .hero-photo {
-  width: clamp(240px, 28vw, 360px); aspect-ratio: 4/5; object-fit:cover; object-position:center top;
+  width: clamp(204px, 23.8vw, 306px); aspect-ratio: 4/5; object-fit:cover; object-position:center top;
   border-radius: var(--hero-photo-radius);
   border:1px solid var(--line);
   box-shadow: var(--card-shadow);

@@ -9,16 +9,9 @@ deploys to identitymatters.blog in ~30 seconds (via GitHub Actions). No manual s
 
 ---
 
-## The easiest way: just ask Claude
+## The easiest way
 
-Open Claude in this folder and describe the change in plain English:
-- *"Change my title to Senior Product Manager."*
-- *"Add a talk: RSA Conference 2026, San Francisco, on passkeys."*
-- *"Here's a new article, please add it: …"*
-
-Claude edits the right files, commits, and it goes live. You don't need to touch code.
-
-If you'd rather do it yourself, here's the map.
+Open Claude in this folder and describe the change, if you'd rather do it yourself, here's the map.
 
 ## Where everything lives
 

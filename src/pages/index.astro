@@ -47,8 +47,8 @@ const articlesForClient = articles.map((a) => {
     <div class="nav-links">
       <a href="#about" data-scroll="about">About</a>
       <a href="#expertise" data-scroll="expertise">Expertise</a>
-      <a href="#speaking" data-scroll="speaking">Speaking</a>
       <a href="#writing" data-scroll="writing">Writing</a>
+      <a href="#speaking" data-scroll="speaking">Speaking</a>
       <div class="nav-social">
         <a href={person.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" /></a>
         <a href={person.social.x} target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>
@@ -139,6 +139,42 @@ const articlesForClient = articles.map((a) => {
     </div>
   </section>
 
+  <!-- ===== Writing ===== -->
+  <section id="writing">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Writing</span>
+        <h2>Essays, research &amp; field notes.</h2>
+        <p>Articles published here and on Google Cloud, Oracle and beyond — collected in one place.</p>
+      </div>
+      <div class="write-grid">
+        {articles.map((a, i) => (
+          <article class="article-card reveal" style={`transition-delay:${(i % 3) * 60}ms`} data-article={i} role="button" tabindex="0" aria-label={`Open: ${a.title}`}>
+            <div class="article-thumb">
+              {a.img ? (
+                <>
+                  <img src={url(a.img)} alt={a.title} loading="lazy" data-fallback />
+                  <div class="ph" style="display:none">{phLabel(a.title)}</div>
+                </>
+              ) : (
+                <div class="ph">{phLabel(a.title)}</div>
+              )}
+            </div>
+            <div class="article-body">
+              <div class="article-date">{a.date}</div>
+              <h3>{a.title}</h3>
+              <p>{a.excerpt}</p>
+              <div class="article-foot">
+                <span class="article-source">{a.source}</span>
+                <span class="article-read">{readLabel(a.kind)} <Icon name="arrow" /></span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <!-- ===== Speaking ===== -->
   <section class="speaking" id="speaking">
     <div class="wrap">
@@ -188,42 +224,6 @@ const articlesForClient = articles.map((a) => {
               ? <a class="talk-link" href={t.url} target="_blank" rel="noopener">Event page <Icon name="ext" /></a>
               : <span class="talk-link disabled">Past talk</span>}
           </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== Writing ===== -->
-  <section id="writing">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Writing</span>
-        <h2>Essays, research &amp; field notes.</h2>
-        <p>Articles published here and on Google Cloud, Oracle and beyond — collected in one place.</p>
-      </div>
-      <div class="write-grid">
-        {articles.map((a, i) => (
-          <article class="article-card reveal" style={`transition-delay:${(i % 3) * 60}ms`} data-article={i} role="button" tabindex="0" aria-label={`Open: ${a.title}`}>
-            <div class="article-thumb">
-              {a.img ? (
-                <>
-                  <img src={url(a.img)} alt={a.title} loading="lazy" data-fallback />
-                  <div class="ph" style="display:none">{phLabel(a.title)}</div>
-                </>
-              ) : (
-                <div class="ph">{phLabel(a.title)}</div>
-              )}
-            </div>
-            <div class="article-body">
-              <div class="article-date">{a.date}</div>
-              <h3>{a.title}</h3>
-              <p>{a.excerpt}</p>
-              <div class="article-foot">
-                <span class="article-source">{a.source}</span>
-                <span class="article-read">{readLabel(a.kind)} <Icon name="arrow" /></span>
-              </div>
-            </div>
-          </article>
         ))}
       </div>
     </div>

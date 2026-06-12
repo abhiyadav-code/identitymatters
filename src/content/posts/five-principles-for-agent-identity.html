@@ -1,0 +1,558 @@
+<style>
+  /* ============================================================
+     Identity Matters — blog post
+     Palette + type mirror the personal site's "warm" direction.
+     Content lives in plain semantic HTML below — edit freely.
+     ============================================================ */
+  :root{
+    --paper:#FBF5EC; --surface:#FFFDF8; --surface-2:#F2E7D8; --raise:#FFFFFF;
+    --ink:#2B2620; --muted:#7C7164; --faint:#A99B8A; --line:#E7DAC8;
+    --accent:#BF512E; --accent-2:#5E7E6E; --accent-soft:#F4E2D7; --on-accent:#FFF8F1;
+    --radius:18px; --radius-sm:12px;
+    --shadow:0 1px 2px rgba(0,0,0,.04), 0 18px 40px -28px rgba(60,40,20,.45);
+    --font-display:"Newsreader", Georgia, serif;
+    --font-body:"Hanken Grotesk", system-ui, sans-serif;
+    --font-mono:"Space Mono", ui-monospace, monospace;
+  }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--font-body); font-size:17px; line-height:1.65;
+    letter-spacing:-0.005em; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  a{ color:var(--accent); text-decoration:none; }
+  a:hover{ text-decoration:underline; text-underline-offset:3px; }
+  img{ max-width:100%; display:block; }
+
+  /* ---------- progress bar ---------- */
+  .progress{ position:fixed; top:0; left:0; height:3px; width:0; background:var(--accent); z-index:80; transition:width .1s linear; }
+
+  /* ---------- masthead ---------- */
+  .mast{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px clamp(20px,4vw,48px);
+    border-bottom:1px solid var(--line);
+  }
+  .mast .wordmark{
+    font-family:var(--font-display); font-weight:600; font-size:1.15rem; letter-spacing:-0.01em; color:var(--ink);
+    display:flex; align-items:center; gap:11px;
+  }
+  .mast .wordmark .mono{
+    width:34px; height:34px; display:grid; place-items:center; border-radius:10px;
+    background:var(--accent); color:var(--on-accent); font-family:var(--font-mono); font-size:.78rem; font-weight:700;
+  }
+  .mast .wordmark em{ font-style:italic; color:var(--accent); }
+  .mast nav{ display:flex; gap:24px; font-size:.9rem; color:var(--muted); }
+  .mast nav a{ color:var(--muted); }
+  .mast nav a:hover{ color:var(--ink); text-decoration:none; }
+
+  /* ---------- layout ---------- */
+  .wrap{ width:min(720px,92vw); margin:0 auto; }
+  .wrap-wide{ width:min(900px,94vw); margin:0 auto; }
+
+  .eyebrow{
+    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--accent-2); display:inline-flex; align-items:center; gap:.6em;
+  }
+  .eyebrow::before{ content:""; width:26px; height:1px; background:var(--accent-2); }
+
+  /* ---------- hero ---------- */
+  .hero{ padding:clamp(56px,9vh,96px) 0 clamp(36px,5vh,56px); }
+  .hero h1{
+    font-family:var(--font-display); font-weight:500; letter-spacing:-0.01em; line-height:1.04;
+    font-size:clamp(2.6rem,6.4vw,4.4rem); margin:.45em 0 0;
+  }
+  .hero h1 em{ font-style:italic; color:var(--accent); }
+  .hero .dek{
+    font-size:1.22rem; line-height:1.55; color:var(--muted); margin:26px 0 0; max-width:56ch;
+  }
+  .byline{
+    display:flex; align-items:center; gap:14px; margin-top:34px;
+    padding-top:22px; border-top:1px solid var(--line);
+  }
+  .byline img{ width:46px; height:46px; border-radius:50%; object-fit:cover; object-position:center top; border:1px solid var(--line); }
+  .byline .who{ font-weight:700; font-size:.95rem; }
+  .byline .meta{ font-family:var(--font-mono); font-size:.72rem; color:var(--faint); letter-spacing:.06em; text-transform:uppercase; margin-top:2px; }
+
+  /* ---------- five-up index ---------- */
+  .index{ margin:clamp(36px,6vh,60px) auto; }
+  .index ol{
+    list-style:none; margin:0; padding:0;
+    display:grid; grid-template-columns:repeat(5,1fr); gap:10px;
+  }
+  .index a{
+    display:block; height:100%; padding:14px 14px 16px; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius-sm); color:var(--ink); transition:all .2s ease;
+  }
+  .index a:hover{ border-color:var(--accent); transform:translateY(-3px); box-shadow:var(--shadow); text-decoration:none; }
+  .index .n{ font-family:var(--font-mono); font-size:.72rem; color:var(--accent); }
+  .index .t{ font-family:var(--font-display); font-weight:500; font-size:.98rem; line-height:1.22; margin-top:7px; }
+  @media (max-width:760px){ .index ol{ grid-template-columns:repeat(2,1fr); } .index ol li:last-child{ grid-column:span 2; } }
+
+  /* ---------- article ---------- */
+  article{ padding-bottom:40px; }
+  article p{ margin:0 0 1.25em; }
+  article p strong{ font-weight:700; }
+  .lede::first-letter{
+    font-family:var(--font-display); font-size:3.3em; float:left; line-height:.82;
+    padding:5px 12px 0 0; color:var(--accent); font-weight:500;
+  }
+
+  .principle{ margin-top:clamp(56px,9vh,86px); }
+  .p-head{ display:flex; align-items:baseline; gap:18px; margin-bottom:18px; }
+  .p-num{
+    font-family:var(--font-mono); font-size:.95rem; color:var(--accent); white-space:nowrap;
+    border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:6px 13px;
+  }
+  .principle h2{
+    font-family:var(--font-display); font-weight:500; letter-spacing:-0.01em;
+    font-size:clamp(1.7rem,3.6vw,2.4rem); line-height:1.12; margin:0; text-wrap:pretty;
+  }
+
+  /* the "why" callout — accountability, injection, liability */
+  .why{
+    margin:26px 0; padding:18px 22px; background:var(--surface-2);
+    border-radius:var(--radius-sm);
+  }
+  .why .lbl{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); }
+  .why p{ margin:8px 0 0; font-size:1.02rem; color:var(--ink); }
+  .why p em{ font-family:var(--font-display); font-style:italic; font-size:1.08em; }
+
+  /* failure-mode one-liner */
+  .fail{
+    margin:24px 0 0; padding-left:22px; border-left:3px solid var(--accent);
+    font-family:var(--font-display); font-style:italic; font-weight:500;
+    font-size:1.18rem; line-height:1.45; color:var(--ink);
+  }
+
+  /* standards pills */
+  .standards{ display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
+  .standards .lbl{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); width:100%; }
+  .pill{
+    font-family:var(--font-mono); font-size:.74rem; padding:6px 13px; border-radius:999px;
+    background:var(--surface); border:1px solid var(--line); color:var(--muted); white-space:nowrap;
+  }
+
+  /* ---------- figures ---------- */
+  figure.fig{
+    margin:34px 0; padding:clamp(22px,4vw,38px); background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  figcaption{
+    margin-top:18px; font-size:.85rem; color:var(--muted); text-align:center; line-height:1.5;
+  }
+  figcaption b{ color:var(--ink); font-weight:700; }
+
+  /* fig 1 — chain */
+  .chain{ display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:nowrap; }
+  .chain .node{ text-align:center; flex:0 0 auto; }
+  .chain .dot{
+    width:54px; height:54px; margin:0 auto; border-radius:50%;
+    display:grid; place-items:center; font-size:22px;
+    background:var(--accent-soft); border:1.5px solid var(--accent);
+  }
+  .chain .node.human .dot{ background:var(--accent); border-color:var(--accent); }
+  .chain .node span{ display:block; font-family:var(--font-mono); font-size:.66rem; color:var(--muted); margin-top:8px; letter-spacing:.04em; }
+  .chain .link{
+    flex:0 1 70px; height:2px; min-width:26px; margin:0 6px 26px;
+    background:repeating-linear-gradient(90deg, var(--accent) 0 7px, transparent 7px 13px);
+    position:relative;
+  }
+  .chain .link::after{
+    content:""; position:absolute; top:-3.5px; left:0; width:9px; height:9px; border-radius:50%;
+    background:var(--accent); opacity:0;
+  }
+  .fig.in .chain .link::after{ animation:travel 2.6s ease-in-out infinite; }
+  .chain .link:nth-of-type(4)::after{ animation-delay:.3s; }
+  .chain .link:nth-of-type(6)::after{ animation-delay:.6s; }
+  @keyframes travel{
+    0%{ left:0; opacity:0; } 12%{ opacity:1; } 45%{ left:calc(100% - 9px); opacity:1; }
+    58%{ opacity:0; } 100%{ left:0; opacity:0; }
+  }
+  .chain-verdict{
+    display:flex; justify-content:center; gap:26px; margin-top:24px; flex-wrap:wrap;
+  }
+  .verdict{ display:flex; align-items:center; gap:9px; font-size:.85rem; color:var(--muted); }
+  .verdict .mark{ font-weight:700; }
+  .verdict.good .mark{ color:var(--accent-2); }
+  .verdict.bad .mark{ color:var(--accent); }
+  .verdict s{ text-decoration-color:var(--accent); }
+
+  /* fig 2 — credential card */
+  .cred{
+    max-width:430px; margin:0 auto; background:var(--raise); border:1px solid var(--line);
+    border-radius:var(--radius-sm); overflow:hidden;
+  }
+  .cred .cred-top{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 18px; background:var(--surface-2);
+    font-family:var(--font-mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+  }
+  .cred .seal{ color:var(--accent-2); letter-spacing:0; }
+  .cred dl{ margin:0; padding:18px; display:grid; grid-template-columns:auto 1fr; gap:10px 16px; }
+  .cred dt{ font-family:var(--font-mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); padding-top:3px; }
+  .cred dd{ margin:0; font-size:.95rem; }
+  .cred dd.why-claim{ font-family:var(--font-display); font-style:italic; font-size:1.05rem; color:var(--ink); }
+  .cred dd .chip{ display:inline-block; font-family:var(--font-mono); font-size:.72rem; background:var(--accent-soft); color:var(--accent); border-radius:6px; padding:2px 9px; }
+  .cred-drift{
+    max-width:430px; margin:16px auto 0; padding:13px 18px; border-radius:var(--radius-sm);
+    border:1.5px dashed var(--accent); background:transparent;
+    display:flex; gap:12px; align-items:baseline; font-size:.92rem;
+  }
+  .cred-drift .x{ font-family:var(--font-mono); font-weight:700; color:var(--accent); }
+  .cred-drift s{ color:var(--muted); text-decoration-color:var(--accent); }
+
+  /* fig 3 — externalized PDP */
+  .pdp{ display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center; max-width:560px; margin:0 auto; }
+  .pdp .box{
+    border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px; background:var(--raise); text-align:center;
+  }
+  .pdp .box .ttl{ font-weight:700; font-size:.95rem; }
+  .pdp .box .sub{ font-size:.78rem; color:var(--muted); margin-top:3px; line-height:1.4; }
+  .pdp .box.agent{ position:relative; }
+  .pdp .box.pdp-box{ border-color:var(--accent-2); background:#F0F4F1; }
+  .pdp .arrows{ text-align:center; font-family:var(--font-mono); font-size:.7rem; color:var(--muted); line-height:2.1; white-space:nowrap; }
+  .pdp .arrows .a{ color:var(--accent-2); }
+  .inject{
+    position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+    font-family:var(--font-mono); font-size:.66rem; color:var(--accent); white-space:nowrap;
+  }
+  .inject::after{ content:"↘"; display:inline-block; margin-left:3px; }
+  .fig.in .inject{ animation:jitter 2.2s ease-in-out infinite; }
+  @keyframes jitter{ 0%,100%{ transform:translateX(-50%) translateY(0); } 50%{ transform:translateX(-50%) translateY(4px); } }
+  @media (max-width:620px){
+    .pdp{ grid-template-columns:1fr; }
+    .pdp .arrows{ line-height:1.6; }
+    .inject{ top:-26px; }
+  }
+
+  /* fig 4 — two layers */
+  .layers{ max-width:560px; margin:0 auto; }
+  .layer{
+    border-radius:var(--radius-sm); padding:16px 20px; display:flex; gap:16px; align-items:flex-start;
+  }
+  .layer .tag{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; padding-top:3px; }
+  .layer .desc{ font-size:.92rem; line-height:1.5; }
+  .layer .desc b{ display:block; font-size:.98rem; }
+  .layer .desc span{ color:var(--muted); font-size:.85rem; }
+  .layer.dynamic{ border:1.5px dashed var(--accent); background:transparent; margin-bottom:12px; }
+  .layer.dynamic .tag{ color:var(--accent); }
+  .layer.static{ background:var(--surface-2); border:1px solid var(--line); }
+  .layer.static .tag{ color:var(--accent-2); }
+  .layers .split{
+    text-align:center; font-family:var(--font-mono); font-size:.68rem; color:var(--faint);
+    letter-spacing:.14em; text-transform:uppercase; margin:10px 0;
+  }
+
+  /* fig 5 — out-of-band HITL */
+  .hitl{ display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:620px; margin:0 auto; }
+  .hitl .lane{
+    border-radius:var(--radius-sm); padding:18px; position:relative;
+  }
+  .hitl .lane .lane-lbl{ font-family:var(--font-mono); font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; margin-bottom:12px; }
+  .hitl .lane.llm{ border:1.5px dashed var(--accent); }
+  .hitl .lane.llm .lane-lbl{ color:var(--accent); }
+  .hitl .lane.oob{ border:1px solid var(--accent-2); background:#F0F4F1; }
+  .hitl .lane.oob .lane-lbl{ color:var(--accent-2); }
+  .hitl .bubble{
+    background:var(--raise); border:1px solid var(--line); border-radius:12px;
+    padding:10px 14px; font-size:.88rem; margin-bottom:10px;
+  }
+  .hitl .bubble.quote{ font-family:var(--font-display); font-style:italic; }
+  .hitl .stamp{
+    display:inline-block; font-family:var(--font-mono); font-size:.68rem; font-weight:700;
+    padding:4px 10px; border-radius:6px; letter-spacing:.08em;
+  }
+  .hitl .lane.llm .stamp{ color:var(--accent); border:1.5px solid var(--accent); transform:rotate(-3deg); }
+  .hitl .lane.oob .stamp{ color:#3D5C4D; border:1.5px solid var(--accent-2); transform:rotate(-2deg); }
+  @media (max-width:620px){ .hitl{ grid-template-columns:1fr; } }
+
+  /* ---------- filter / checklist ---------- */
+  .filter{ margin-top:clamp(60px,9vh,90px); }
+  .filter h2{
+    font-family:var(--font-display); font-weight:500; font-size:clamp(1.7rem,3.6vw,2.4rem);
+    line-height:1.12; margin:14px 0 10px; letter-spacing:-0.01em;
+  }
+  .filter > .wrap > p{ color:var(--muted); max-width:58ch; }
+  .checklist{ list-style:none; margin:30px 0 0; padding:0; counter-reset:q; }
+  .checklist li{
+    counter-increment:q; position:relative; padding:18px 20px 18px 64px; margin-bottom:12px;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm);
+  }
+  .checklist li::before{
+    content:counter(q, decimal-leading-zero); position:absolute; left:20px; top:19px;
+    font-family:var(--font-mono); font-size:.8rem; color:var(--accent);
+  }
+  .checklist .q{ font-weight:700; font-size:1.02rem; }
+  .checklist .a{ font-size:.92rem; color:var(--muted); margin-top:4px; line-height:1.5; }
+  .checklist .a b{ color:var(--accent-2); font-weight:700; }
+  .checklist .a i{ color:var(--accent); font-style:normal; font-weight:600; }
+
+  /* ---------- author footer ---------- */
+  .author{
+    margin:clamp(60px,9vh,90px) 0 0; padding:clamp(36px,6vw,52px) 0 64px;
+    background:var(--surface-2); border-top:1px solid var(--line);
+  }
+  .author .card{ display:flex; gap:22px; align-items:center; }
+  .author img{ width:74px; height:74px; border-radius:50%; object-fit:cover; object-position:center top; border:1px solid var(--line); }
+  .author .bio{ font-size:.98rem; color:var(--muted); line-height:1.6; }
+  .author .bio b{ color:var(--ink); }
+  .author .links{ margin-top:8px; font-family:var(--font-mono); font-size:.78rem; }
+  @media (max-width:560px){ .author .card{ flex-direction:column; align-items:flex-start; } }
+
+  /* ---------- reveal ---------- */
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .fig.in .chain .link::after, .fig.in .inject{ animation:none; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+
+<div class="progress" id="progress"></div>
+
+<!-- ================= MASTHEAD ================= -->
+<header class="mast">
+  <a class="wordmark" href="/"><span class="mono">IM</span>Identity <em>Matters</em></a>
+  <nav>
+    <a href="/#writing">Writing</a>
+    <a href="/#about">About</a>
+  </nav>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Agentic Identity</span>
+    <h1>Five principles for <em>agent</em> identity.</h1>
+    <p class="dek">The IAM industry is moving fast on agent identity — new architectures, new vendors, plenty of standards work. Some will consolidate, some will fade. But underneath the noise, a small set of principles keeps surfacing. Whatever stack you build or buy, the good designs share these five.</p>
+    <div class="byline">
+      <img src="/images/abhi-headshot-light.jpg" alt="Abhi Yadav" />
+      <div>
+        <div class="who">Abhi Yadav</div>
+        <div class="meta">June 2026 · 6 min read</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INDEX ================= -->
+<nav class="index wrap-wide reveal" aria-label="The five principles">
+  <ol>
+    <li><a href="#p1"><span class="n">01</span><span class="t">Identity must be a chain, not a credential</span></a></li>
+    <li><a href="#p2"><span class="n">02</span><span class="t">Intent must travel with identity</span></a></li>
+    <li><a href="#p3"><span class="n">03</span><span class="t">Authorization must live outside the agent</span></a></li>
+    <li><a href="#p4"><span class="n">04</span><span class="t">Static guardrails and runtime decisions</span></a></li>
+    <li><a href="#p5"><span class="n">05</span><span class="t">Human confirmation outside the LLM</span></a></li>
+  </ol>
+</nav>
+
+<article>
+  <div class="wrap">
+
+    <!-- ================= PRINCIPLE 1 ================= -->
+    <section class="principle" id="p1">
+      <div class="p-head reveal"><span class="p-num">01</span>
+        <h2>Identity must be a chain, not a credential.</h2>
+      </div>
+      <p class="reveal">When a human acts, identity is a token: authenticate, issue, validate. One actor, one identity. When an agent acts on behalf of a human — through sub-agents, tool calls, retries — identity has to be a <strong>chain</strong> that cryptographically traces every action back to the originating human, through any number of agent intermediaries.</p>
+
+      <figure class="fig reveal">
+        <div class="chain">
+          <div class="node human"><div class="dot">&#128100;</div><span>human</span></div>
+          <div class="link"></div>
+          <div class="node"><div class="dot">&#10022;</div><span>agent</span></div>
+          <div class="link"></div>
+          <div class="node"><div class="dot">&#10022;</div><span>sub-agent</span></div>
+          <div class="link"></div>
+          <div class="node"><div class="dot">&#128451;</div><span>resource</span></div>
+        </div>
+        <div class="chain-verdict">
+          <div class="verdict good"><span class="mark">&#10003;</span> chained — every hop verifiable back to the human</div>
+          <div class="verdict bad"><span class="mark">&#10007;</span> bearer token — <s>"the agent did it, not me"</s></div>
+        </div>
+        <figcaption>The credential the leaf resource sees must tie back to the <b>originating human</b> — not just to the last agent that touched it.</figcaption>
+      </figure>
+
+      <div class="why reveal">
+        <span class="lbl">Why it matters</span>
+        <p>Accountability. When an agent does something it shouldn't — wrong message, wrong file, wrong funds — the question is <em>who's responsible?</em> Without the chain, "the agent went rogue, talk to my LLM provider" is a plausible defense — and exactly the move bad actors will rely on. The chain forecloses it: legal liability, audit trails, and regulatory reporting all need an unambiguous answer.</p>
+      </div>
+
+      <div class="standards reveal">
+        <span class="lbl">Standards to watch</span>
+        <span class="pill">SPIFFE / SPIRE</span><span class="pill">W3C Verifiable Credentials</span>
+      </div>
+    </section>
+
+    <!-- ================= PRINCIPLE 2 ================= -->
+    <section class="principle" id="p2">
+      <div class="p-head reveal"><span class="p-num">02</span>
+        <h2>Intent must travel with identity.</h2>
+      </div>
+      <p class="reveal">Identity tells you <strong>who</strong>; intent tells you <strong>why</strong>. An agent acting with my identity inherits my permissions — but not my purpose. I asked it to "speed up the build pipeline." It has my permissions and can write to production. Mid-execution, after an LLM rewrite of its task plan, it decides the fastest way to speed up the build is to kill everyone else's jobs. Identity check passes. Authorization check passes. Catastrophe.</p>
+
+      <figure class="fig reveal">
+        <div class="cred">
+          <div class="cred-top"><span>credential</span><span class="seal">&#10003; signed at issuance</span></div>
+          <dl>
+            <dt>who</dt><dd>abhi&#64;&hellip; <span class="chip">via agent</span></dd>
+            <dt>why</dt><dd class="why-claim">"speed up the build pipeline"</dd>
+            <dt>scope</dt><dd><span class="chip">build:write</span> <span class="chip">narrow-only</span></dd>
+          </dl>
+        </div>
+        <div class="cred-drift">
+          <span class="x">&#10007; denied at leaf</span>
+          <span><s>"kill other users' running jobs"</s> — action doesn't match the bound intent</span>
+        </div>
+        <figcaption>Bind intent <b>at issuance</b>; verify it <b>at the leaf</b>. Child credentials can only narrow the grant, never widen it.</figcaption>
+      </figure>
+
+      <div class="why reveal">
+        <span class="lbl">Why it matters</span>
+        <p>Reconstructing intent at the leaf is too late — and trusting the agent to faithfully relay its own intent is <em>exactly the failure mode we're trying to prevent.</em> The credential must carry the original human-authorized intent so policy can check that the action semantically matches it, not just that the role fits.</p>
+      </div>
+
+      <div class="standards reveal">
+        <span class="lbl">Conceptual foundations</span>
+        <span class="pill">OAuth RAR · RFC 9396</span><span class="pill">macaroons</span><span class="pill">biscuit-auth</span>
+      </div>
+    </section>
+
+    <!-- ================= PRINCIPLE 3 ================= -->
+    <section class="principle" id="p3">
+      <div class="p-head reveal"><span class="p-num">03</span>
+        <h2>Authorization must be externalized from the agent's reasoning.</h2>
+      </div>
+      <p class="reveal">The agent feels like the right place to decide — it has the most context about the task, the data, the next step. The principle says: <strong>don't.</strong> Agents are vulnerable to prompt injection. If the authorization logic lives inside the agent's reasoning loop, an attacker who controls its input has compromised your policy decision point.</p>
+
+      <figure class="fig reveal">
+        <div class="pdp">
+          <div class="box agent">
+            <span class="inject">prompt injection</span>
+            <div class="ttl">Agent</div>
+            <div class="sub">reasoning loop<br/>(untrusted for policy)</div>
+          </div>
+          <div class="arrows"><span>"may I?" &rarr;</span><br/><span class="a">&larr; decision</span></div>
+          <div class="box pdp-box">
+            <div class="ttl">External PDP</div>
+            <div class="sub">policy evaluated outside the loop, enforced at the PEP</div>
+          </div>
+        </div>
+        <figcaption>The agent doesn't decide whether it can act — it <b>asks</b>. Injection can bend the agent's reasoning, but not the verdict.</figcaption>
+      </figure>
+
+      <div class="why reveal">
+        <span class="lbl">Why it matters</span>
+        <p>An injected agent can convince itself an action is authorized when it isn't. Externalize the decision and the attack surface narrows dramatically — the pattern that's been industry practice for human workflows for a decade becomes <em>load-bearing</em> for agents.</p>
+      </div>
+
+      <div class="standards reveal">
+        <span class="lbl">Standards to watch</span>
+        <span class="pill">OpenID AuthZEN</span><span class="pill">OPA</span><span class="pill">Cedar</span>
+      </div>
+    </section>
+
+    <!-- ================= PRINCIPLE 4 ================= -->
+    <section class="principle" id="p4">
+      <div class="p-head reveal"><span class="p-num">04</span>
+        <h2>Permissions need both static guardrails and runtime decisions.</h2>
+      </div>
+      <p class="reveal">A tempting simplification: make everything ephemeral, evaluate every permission at action time, no standing grants. Directionally right, operationally wrong — pure-ephemeral architectures don't scale. The better framing is a deliberate split across two layers.</p>
+
+      <figure class="fig reveal">
+        <div class="layers">
+          <div class="layer dynamic">
+            <span class="tag">runtime</span>
+            <div class="desc"><b>Action-time decisions</b><span>high-risk, low-volume, context-dependent — this agent, this human, this intent, this device posture, right now</span></div>
+          </div>
+          <div class="split">&mdash; the art is in the split &mdash;</div>
+          <div class="layer static">
+            <span class="tag">static</span>
+            <div class="desc"><b>Precomputed guardrails</b><span>mandatory blocks &amp; high-volume routine paths — cheap, deterministic, auditable in advance: "this agent class can never touch production secrets"</span></div>
+          </div>
+        </div>
+        <figcaption>Get the split wrong one way and you <b>bottleneck</b> on policy evaluation; the other way and you accumulate <b>latent risk nobody audits</b>.</figcaption>
+      </figure>
+
+      <div class="why reveal">
+        <span class="lbl">Why it matters</span>
+        <p>Static guardrails are how compliance, security, and legal get assurance that <em>certain things will not happen, no matter what context an agent finds itself in.</em> Runtime decisions are how high-stakes access stays contextual. The agentic-era contribution isn't new primitives — it's reasoning about which decisions live where.</p>
+      </div>
+
+      <div class="standards reveal">
+        <span class="lbl">Mature primitives</span>
+        <span class="pill">just-in-time access</span><span class="pill">short-lived tokens</span><span class="pill">OpenID CAEP</span>
+      </div>
+    </section>
+
+    <!-- ================= PRINCIPLE 5 ================= -->
+    <section class="principle" id="p5">
+      <div class="p-head reveal"><span class="p-num">05</span>
+        <h2>Human-in-the-loop confirmation must live outside the LLM.</h2>
+      </div>
+      <p class="reveal">Irreversible actions — sending money, deleting data, deploying code — need a human to approve them. Every responsible framework has a confirmation step. The question is <strong>where the flag is evaluated.</strong> If "did the human approve?" is answered inside the LLM's reasoning, prompt injection can fake the approval.</p>
+
+      <figure class="fig reveal">
+        <div class="hitl">
+          <div class="lane llm">
+            <div class="lane-lbl">inside the LLM &mdash; don't</div>
+            <div class="bubble quote">"The human said yes, proceed."</div>
+            <div class="bubble">Confirmation inferred from conversation context&hellip;</div>
+            <span class="stamp">FORGEABLE</span>
+          </div>
+          <div class="lane oob">
+            <div class="lane-lbl">out-of-band &mdash; do</div>
+            <div class="bubble">&#128241; Push to verified device &rarr; approve</div>
+            <div class="bubble">&#128273; WebAuthn / FIDO2 challenge &rarr; signed</div>
+            <span class="stamp">DETERMINISTIC</span>
+          </div>
+        </div>
+        <figcaption>"Human X approved Y at time Z" must be a <b>cryptographic fact</b>, not a conclusion the model reasoned its way into.</figcaption>
+      </figure>
+
+      <div class="why reveal">
+        <span class="lbl">Why it matters</span>
+        <p>The deeper reason isn't injection — it's accountability, compliance, and liability. <em>Liability lives on humans, not on systems.</em> SOX requires human attestation; GDPR Article 22 limits solely-automated decisions; HIPAA expects human oversight of PHI. Optimize the human out of the loop for speed, and you've optimized away the entity that takes responsibility when things break.</p>
+      </div>
+
+      <div class="standards reveal">
+        <span class="lbl">Partial precedents — this is the open standardization opportunity</span>
+        <span class="pill">WebAuthn / FIDO2</span><span class="pill">OAuth CIBA</span><span class="pill">PAR</span>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================= THE FILTER ================= -->
+  <section class="filter">
+    <div class="wrap">
+      <span class="eyebrow reveal">What this means for practitioners</span>
+      <h2 class="reveal">Five principles. They don't tell you which vendor to choose — they tell you what to ask the vendor.</h2>
+      <ol class="checklist">
+        <li class="reveal"><div class="q">Does your design chain identity through agent hops?</div><div class="a"><b>Yes</b> — good. If they wave their hands about "agent identity inheritance," <i>walk away.</i></div></li>
+        <li class="reveal"><div class="q">Do you bind intent to credentials at issuance time?</div><div class="a"><b>Yes</b> — promising. "We evaluate intent at the resource" means <i>the design will leak.</i></div></li>
+        <li class="reveal"><div class="q">Is authorization externalized from the agent's reasoning?</div><div class="a"><b>Yes</b> — defensible. If no, <i>prompt injection compromises you.</i></div></li>
+        <li class="reveal"><div class="q">Is the static / runtime split deliberate?</div><div class="a"><b>Yes</b> — modern. All one or the other means you're <i>bottlenecked or carrying latent risk.</i></div></li>
+        <li class="reveal"><div class="q">Is HITL evaluated outside the LLM, tied to accountable humans?</div><div class="a"><b>Yes</b> — operationally and legally sound. If no, <i>someone will have to explain why.</i></div></li>
+      </ol>
+      <p class="reveal" style="margin-top:28px;">The standards will keep evolving and the right architecture for your context will look different from someone else's. Miss two of these five, and no implementation polish will save you. Use them as your filter — they'll tell you what's signal and what's noise.</p>
+    </div>
+  </section>
+
+  <!-- ================= AUTHOR ================= -->
+  <footer class="author">
+    <div class="wrap">
+      <div class="card reveal">
+        <img src="/images/abhi-headshot-light.jpg" alt="Abhi Yadav" />
+        <div>
+          <div class="bio"><b>Abhi Yadav</b> has spent twenty years in Identity &amp; Access Management, most recently building Alphabet's workforce identity &amp; access platform and 0-to-1 agentic identity controls for Google's AI agents.</div>
+          <div class="links"><a href="/">identitymatters.blog</a> &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/abhiyadav/">linkedin</a></div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</article>

@@ -12,10 +12,13 @@ const bodies = import.meta.glob('../../content/articles/*.html', {
 }) as Record<string, string>;
 
 export function getStaticPaths() {
-  return articles.filter(hasNativePage).map((a) => ({
-    params: { slug: articleSlug(a) },
-    props: { article: a },
-  }));
+  // Skip customPage articles — those have a bespoke standalone page.
+  return articles
+    .filter((a) => hasNativePage(a) && !a.customPage)
+    .map((a) => ({
+      params: { slug: articleSlug(a) },
+      props: { article: a },
+    }));
 }
 
 const { article } = Astro.props;

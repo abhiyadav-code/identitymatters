@@ -1,0 +1,81 @@
+---
+// Standalone, fully-designed blog post (Claude Design handoff).
+// Self-contained: its own styles live inside the body HTML; we only own the
+// <head> and the progress/reveal script here.
+import rawBody from '../../content/posts/five-principles-for-agent-identity.html?raw';
+import { url } from '../../lib/url';
+
+const title = 'Five Principles for Agent Identity';
+const description =
+  'Underneath the noise of agentic identity standards, a small set of architectural principles keeps surfacing. Whatever stack you build or buy, the good designs share these five.';
+const canonical = new URL('/writing/five-principles-for-agent-identity/', Astro.site);
+const ogImage = new URL(url('/images/five-principles-cover.jpg'), Astro.site);
+
+// Base-resolve internal links + local image paths for preview vs. production.
+const prefix = url('/'); // "/" or "/identitymatters/"
+const body = rawBody
+  .replaceAll('src="/images/', `src="${prefix}images/`)
+  .replaceAll('href="/#', `href="${prefix}#`)
+  .replaceAll('href="/"', `href="${prefix}"`);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+
+    <title>{title} — Identity Matters</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Identity Matters" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Fragment set:html={body} />
+
+    <script is:inline>
+      // Reading progress
+      var bar = document.getElementById('progress');
+      addEventListener(
+        'scroll',
+        function () {
+          var h = document.documentElement;
+          var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+          if (bar) bar.style.width = pct + '%';
+        },
+        { passive: true },
+      );
+      // Scroll reveal (figures get .in to start their animations)
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) {
+              en.target.classList.add('in');
+              io.unobserve(en.target);
+            }
+          });
+        },
+        { threshold: 0.15 },
+      );
+      document.querySelectorAll('.reveal, .fig').forEach(function (el) {
+        io.observe(el);
+      });
+    </script>
+  </body>
+</html>

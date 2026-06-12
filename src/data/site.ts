@@ -11,6 +11,9 @@ export interface Article {
   url: string;
   source: string;
   excerpt: string;
+  // true → a bespoke standalone page at src/pages/writing/<slug>.astro
+  // (not the generic content-driven [slug] reader).
+  customPage?: boolean;
 }
 
 export const person = {
@@ -93,6 +96,15 @@ export const talks = [
 ];
 
 export const articles: Article[] = [
+  {
+    title: 'Five Principles for Agent Identity',
+    date: 'Jun 12, 2026', year: '2026', cat: 'Agentic Identity', kind: 'article',
+    img: '/images/articles/five-principles-for-agent-identity.jpg',
+    url: '',
+    source: 'Identity Matters',
+    excerpt: 'The IAM industry is moving fast on agent identity — new architectures, new vendors, plenty of standards work. Underneath the noise, a small set of principles keeps surfacing. Whatever stack you build or buy, the good designs share these five.',
+    customPage: true,
+  },
   {
     title: 'Under the hood: The security analytics that drive IAM recommendations on Google Cloud',
     date: 'Aug 14, 2020', year: '2020', cat: 'Cloud Security', kind: 'article',

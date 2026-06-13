@@ -119,6 +119,16 @@
   .why p{ margin:8px 0 0; font-size:1.02rem; color:var(--ink); }
   .why p em{ font-family:var(--font-display); font-style:italic; font-size:1.08em; }
 
+  /* related "info" bubble — sage-accented, distinct from the .why callout */
+  .note{
+    margin:22px 0 0; padding:18px 22px; background:var(--raise);
+    border:1px solid var(--line); border-left:3px solid var(--accent-2);
+    border-radius:var(--radius-sm);
+  }
+  .note .lbl{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--accent-2); }
+  .note p{ margin:8px 0 0; font-size:.98rem; color:var(--ink); line-height:1.6; }
+  .note p a{ text-decoration:underline; text-underline-offset:3px; }
+
   /* failure-mode one-liner */
   .fail{
     margin:24px 0 0; padding-left:22px; border-left:3px solid var(--accent);
@@ -414,6 +424,11 @@
       <div class="why reveal">
         <span class="lbl">Why it matters</span>
         <p>Reconstructing intent at the leaf is too late — and trusting the agent to faithfully relay its own intent is <em>exactly the failure mode we're trying to prevent.</em> The credential must carry the original human-authorized intent so policy can check that the action semantically matches it, not just that the role fits.</p>
+      </div>
+
+      <div class="note reveal">
+        <span class="lbl">Limited Powers</span>
+        <p>This is also what Google's Secure AI Framework calls the <a href="https://storage.googleapis.com/gweb-research2023-media/pubtools/1018686.pdf" target="_blank" rel="noopener">Limited Powers principle</a> — agent frameworks must verifiably constrain what agents and agent-exposed tools can do. OAuth scopes are the established mechanism for modeling bounded permission. But if you've ever found OAuth scopes too coarse for what you actually want to express — "this user can read, but only this thing, under these conditions, for this purpose" — RAR's structured authorization details, with biscuit-auth and Cedar mandates could extend the same pattern with the granularity and provability that agentic delegation requires.</p>
       </div>
 
       <div class="standards reveal">
